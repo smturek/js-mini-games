@@ -20,3 +20,9 @@ h1 {
 .buttons {
   text-align: center;
 }
+
+.buttons div {
+  margin-right: 20px;
+  padding: 10px;
+  display: inline;
+}
