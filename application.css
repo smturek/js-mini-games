@@ -1,3 +1,17 @@
 h1 {
   color: green;
 }
+
+.title {
+  text-align: center;
+}
+
+.result {
+  text-align: center;
+  width: 100%;
+  height: 300px;
+}
+
+.buttons {
+  text-align: center;
+}
