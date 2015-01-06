@@ -40,3 +40,12 @@ var computerChoose = function() {
     return "scissors";
   }
 };
+
+$(document).ready(function() {
+
+  $('.rock').on('click', function() {
+    $('.game h1').text(result("rock", computerChoose()));
+  });
+
+
+});
