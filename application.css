@@ -26,3 +26,11 @@ h1 {
   padding: 10px;
   display: inline;
 }
+
+canvas {
+  position: absolute;
+  top: 150px;
+  left: 350px;
+  background: transparent;
+  border: 1px solid black;
+}
