@@ -9,12 +9,15 @@ h1 {
 .game {
   text-align: center;
   width: 100%;
-  height: 150px;
+}
+
+.history {
+  text-align: center;
 }
 
 .result {
   color: black;
-  margin-top: 100px;
+  margin-top: 50px;
 }
 
 .buttons {

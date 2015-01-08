@@ -8,25 +8,18 @@ $(document).ready(function() {
   $("#losses span").html(losses);
   $("#ties span").html(ties);
 
-  $('.rock').on('click', function() {
-    $(this).parent().parent().find('.game').find('.result').text(result("rock", computerChoose()));
-    $("#wins span").html(wins);
-    $("#losses span").html(losses);
-    $("#ties span").html(ties);
-  });
-
-  $('.paper').on('click', function() {
-    $(this).parent().parent().find('.game').find('.result').text(result("paper", computerChoose()));
-    $("#wins span").html(wins);
-    $("#losses span").html(losses);
-    $("#ties span").html(ties);
-  });
-
-  $('.scissors').on('click', function() {
-    $(this).parent().parent().find('.game').find('.result').text(result("scissors", computerChoose()));
-    $("#wins span").html(wins);
-    $("#losses span").html(losses);
-    $("#ties span").html(ties);
+  $('[data-play]').on('click', function() {
+    $('[data-placeholder=history]').empty();
+    $('[data-placeholder=result]').empty();
+    var computerChoice = computerChoose();
+    $('[data-placeholder=history]').append($('<p>You chose ' + $(this).data('play') + '</p>'));
+    setTimeout(function () {
+      $('[data-placeholder=history]').append($('<p>The computer chose ' + computerChoice + '</p>'));
+      $('[data-placeholder=result]').text(result($(this).data('play'), computerChoice));
+      $("#wins span").html(wins);
+      $("#losses span").html(losses);
+      $("#ties span").html(ties);
+    }.bind(this), 500);
   });
 
   var result = function(userChoice, computerChoice) {
