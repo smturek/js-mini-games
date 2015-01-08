@@ -174,31 +174,68 @@ function Game() {
     this.ship.draw();
     animate();
   };
+
+
+  // Restart the game
+  this.restart = function() {
+    //this.gameOverAudio.pause();
+
+    document.getElementById('game-over').style.display = "none";
+    this.bgContext.clearRect(0, 0, this.bgCanvas.width, this.bgCanvas.height);
+    this.shipContext.clearRect(0, 0, this.shipCanvas.width, this.shipCanvas.height);
+    this.mainContext.clearRect(0, 0, this.mainCanvas.width, this.mainCanvas.height);
+
+    this.quadTree.clear();
+
+    this.background.init(0,0);
+    this.ship.init(this.shipStartX, this.shipStartY,
+      imageRepository.spaceship.width, imageRepository.spaceship.height);
+
+      this.enemyPool.init("enemy");
+      this.spawnWave();
+      this.enemyBulletPool.init("enemyBullet");
+
+      this.playerScore = 0;
+
+      //this.backgroundAudio.currentTime = 0;
+      //this.backgroundAudio.play();
+
+      this.start();
+    };
+
+    // Game over
+    this.gameOver = function() {
+      //this.backgroundAudio.pause();
+      //this.gameOverAudio.currentTime = 0;
+      //this.gameOverAudio.play();
+      document.getElementById('game-over').style.display = "block";
+    };
 }
 
 function animate() {
   document.getElementById('score').innerHTML = game.playerScore;
-
-  if (game.enemyPool.getPool().length === 0) {
-    game.spawnWave();
-  }
   // Insert objects into quadtree
   game.quadTree.clear();
   game.quadTree.insert(game.ship);
   game.quadTree.insert(game.ship.bulletPool.getPool());
   game.quadTree.insert(game.enemyPool.getPool());
-  //game.quadTree.insert(game.enemyBulletPool.getPool());
-
+  game.quadTree.insert(game.enemyBulletPool.getPool());
   detectCollision();
-
+  // No more enemies
+  if (game.enemyPool.getPool().length === 0) {
+    game.spawnWave();
+  }
   // Animate game objects
-  requestAnimFrame( animate );
-  game.background.draw();
-  game.ship.move();
-  game.ship.bulletPool.animate();
-  game.enemyPool.animate();
-  game.enemyBulletPool.animate();
+  if (game.ship.alive) {
+    requestAnimFrame( animate );
+    game.background.draw();
+    game.ship.move();
+    game.ship.bulletPool.animate();
+    game.enemyPool.animate();
+    game.enemyBulletPool.animate();
+  }
 }
+
 /**
 * requestAnim shim layer by Paul Irish
 * Finds the first API that works to optimize the animation loop,
@@ -362,11 +399,21 @@ Bullet.prototype = new Drawable();
 function Ship() {
   this.speed = 3;
   this.bulletPool = new Pool(30);
-  this.bulletPool.init("bullet");
   var fireRate = 15;
   var counter = 0;
   this.collidableWith = "enemyBullet";
   this.type = "ship";
+
+  this.init = function(x, y, width, height) {
+    // Defualt variables
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+    this.alive = true;
+    this.isColliding = false;
+    this.bulletPool.init("bullet");
+  }
 
   this.draw = function() {
     this.context.drawImage(imageRepository.spaceship, this.x, this.y);
@@ -402,6 +449,10 @@ function Ship() {
                 // Finish by redrawing the ship
         if (!this.isColliding) {
           this.draw();
+        }
+        else {
+          this.alive = false;
+          game.gameOver();
         }
     }
     if (KEY_STATUS.space && counter >= fireRate) {
