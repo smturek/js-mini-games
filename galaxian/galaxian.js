@@ -90,6 +90,8 @@ function Game() {
     this.bgCanvas = document.getElementById('background');
     this.shipCanvas = document.getElementById('ship');
     this.mainCanvas = document.getElementById('main');
+    this.playerScore = 0;
+
     // Test to see if canvas is supported
     if (this.bgCanvas.getContext) {
       this.bgContext = this.bgCanvas.getContext('2d');
@@ -124,6 +126,7 @@ function Game() {
         // Initialize the enemy pool object
         this.enemyPool = new Pool(30);
         this.enemyPool.init("enemy");
+        this.spawnWave();
         var height = imageRepository.enemy.height;
         var width = imageRepository.enemy.width;
         var x = 100;
@@ -148,6 +151,24 @@ function Game() {
         return false;
     }
   };
+
+  // Spawn a new wave of enemies
+  this.spawnWave = function() {
+    var height = imageRepository.enemy.height;
+    var width = imageRepository.enemy.width;
+    var x = 100;
+    var y = -height;
+    var spacer = y * 1.5;
+    for (var i = 1; i <= 18; i++) {
+      this.enemyPool.get(x,y,2);
+      x += width + 25;
+      if (i % 6 == 0) {
+        x = 100;
+        y += spacer
+      }
+    }
+  }
+
   // Start the animation loop
   this.start = function() {
     this.ship.draw();
@@ -156,6 +177,11 @@ function Game() {
 }
 
 function animate() {
+  document.getElementById('score').innerHTML = game.playerScore;
+
+  if (game.enemyPool.getPool().length === 0) {
+    game.spawnWave();
+  }
   // Insert objects into quadtree
   game.quadTree.clear();
   game.quadTree.insert(game.ship);
@@ -445,6 +471,7 @@ function Enemy() {
       return false;
     }
     else {
+      game.playerScore += 10
       return true;
     }
   };
