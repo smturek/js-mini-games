@@ -38,6 +38,13 @@ canvas {
   border: 1px solid black;
 }
 
+#demoCanvas {
+  position: absolute;
+  top: 100px;
+  left: 200px;
+  border: 1px solid black;
+}
+
 #background {
   z-index: -2;
 }
