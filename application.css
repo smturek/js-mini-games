@@ -46,8 +46,9 @@ canvas {
   top: 100px;
   left: 200px;
   border: 1px solid black;
-  background: url(/rpg-battles/imgs/eb_bg.jpg) no-repeat center center;
+  background: url(/rpg-battles/imgs/eb_bg.jpg);
   background-size: cover;
+
 }
 
 #background {
