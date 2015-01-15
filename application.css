@@ -41,6 +41,13 @@ canvas {
   border: 1px solid black;
 }
 
+#roguelikeCanvas {
+  position: absolute;
+  top: 100px;
+  left: 200px;
+  background: black;
+}
+
 #ebCanvas {
   position: absolute;
   top: 100px;
