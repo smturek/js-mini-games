@@ -22,9 +22,25 @@ function init() {
 
   var player = new createjs.Shape();
   player.graphics.beginFill("red").drawRect(0, 0, 10, 10);
-  player.x = 450;
-  player.y = 250;
+  player.x = 10;
+  player.y = 10;
   stage.addChild(player);
+
+  var wallTop = new createjs.Shape();
+  wallTop.graphics.beginFill("white").drawRect(0,0,900,10);
+  stage.addChild(wallTop);
+
+  var wallBot = new createjs.Shape();
+  wallBot.graphics.beginFill("white").drawRect(0,490,900,10);
+  stage.addChild(wallBot);
+
+  var wallRight = new createjs.Shape();
+  wallRight.graphics.beginFill("white").drawRect(890,0,10,500);
+  stage.addChild(wallRight);
+
+  var wallLeft = new createjs.Shape();
+  wallLeft.graphics.beginFill("white").drawRect(0,0,10,500);
+  stage.addChild(wallLeft);
 
   var wall = new createjs.Shape();
   wall.graphics.beginFill("white").drawRect(0,0,50,10);
@@ -46,13 +62,25 @@ function init() {
       player.y += 5;
     }
 
-    console.log(player.x, player.y)
-    console.log(wall.x, wall.y)
+    // console.log(player.x, player.y)
+    // console.log(wall.x, wall.y)
 
-    // if (collideTop) {
-    //   player.y += 1;
-    //   collideTop = false;
-    // }
+    if (collideLeft) {
+      player.x += 5;
+      collideLeft = false;
+    }
+    else if (collideRight) {
+      player.x -= 5;
+      collideRight = false;
+    }
+    else if (collideTop) {
+      player.y -= 5;
+      collideTop = false;
+    }
+    else if (collideBot) {
+      player.y += 5;
+      collideBot = false;
+    }
 
     stage.update();
   }
