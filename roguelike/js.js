@@ -152,7 +152,6 @@ function init() {
     else if(player.y >= wall.y &&
       player.y <= wall.y + 10 &&
       player.x === wall.x + 50){
-        console.log("collide");
         collideLeft = true;
         return true;
       }
@@ -160,7 +159,6 @@ function init() {
     else if(player.y + 10 >= wall.y &&
       player.y + 10 <= wall.y + 10&&
       player.x === wall.x + 50){
-        console.log("collide");
         collideLeft = true;
         return true;
       }
