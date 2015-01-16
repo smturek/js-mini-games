@@ -13,13 +13,13 @@ $(document).ready(function() {
     $('[data-placeholder=result]').empty();
     var computerChoice = computerChoose();
     $('[data-placeholder=history]').append($('<p>You chose ' + $(this).data('play') + '</p>'));
+    $('[data-placeholder=history]').append($('<p>The computer chose ' + computerChoice + '</p>'));
     setTimeout(function () {
-      $('[data-placeholder=history]').append($('<p>The computer chose ' + computerChoice + '</p>'));
       $('[data-placeholder=result]').text(result($(this).data('play'), computerChoice));
       $("#wins span").html(wins);
       $("#losses span").html(losses);
       $("#ties span").html(ties);
-    }.bind(this), 500);
+    }.bind(this), 1000);
   });
 
   var result = function(userChoice, computerChoice) {
