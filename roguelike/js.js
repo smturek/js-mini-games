@@ -44,12 +44,18 @@ function init() {
   wallLeft.graphics.beginFill("gray").drawRect(0,0,10,500);
   stage.addChild(wallLeft);
 
-  var wall = new createjs.Shape();
-  wall.graphics.beginFill("white").drawRect(0,0,50,10);
-  wall.x = 300;
-  wall.y = 200;
-  stage.addChild(wall);
-  
+
+
+
+
+
+
+  // new createjs.Shape();
+  // wall.graphics.beginFill("white").drawRect(0,0,50,10);
+  // wall.x = 300;
+  // wall.y = 200;
+  // stage.addChild(wall);
+
   //Wall Class
   var Wall = function(x, y, width, height, color) {
     this.x = x;
@@ -65,6 +71,12 @@ function init() {
     stage.addChild(visual);
   };
 
+
+  var wall = new Wall(300, 200, 50, 10, "white");
+  wall.show();
+
+  var wall2 = new Wall(200, 300, 50, 10, "white");
+  wall2.show();
 
   createjs.Ticker.addEventListener("tick", tick);
 
