@@ -8,6 +8,7 @@ function init() {
   var backHeld;
 
   var playerSize = 10;
+  var playerSpeed = 5;
 
   var collision = false;
   var collideRight = false;
@@ -24,28 +25,10 @@ function init() {
   document.onkeyup = handleKeyUp;
 
   var player = new createjs.Shape();
-  player.graphics.beginFill("red").drawRect(0, 0, playerSize, playerSize);
+  player.graphics.beginFill("blue").drawRect(0, 0, playerSize, playerSize);
   player.x = 10;
   player.y = 10;
   stage.addChild(player);
-
-  var wallTop = new createjs.Shape();
-  wallTop.graphics.beginFill("gray").drawRect(0,0,900,10);
-  stage.addChild(wallTop);
-
-  var wallBot = new createjs.Shape();
-  wallBot.graphics.beginFill("gray").drawRect(0,490,900,10);
-  stage.addChild(wallBot);
-
-  var wallRight = new createjs.Shape();
-  wallRight.graphics.beginFill("gray").drawRect(890,0,10,500);
-  stage.addChild(wallRight);
-
-  var wallLeft = new createjs.Shape();
-  wallLeft.graphics.beginFill("gray").drawRect(0,0,10,500);
-  stage.addChild(wallLeft);
-
-
 
   //Wall Class
   var Wall = function(x, y, width, height, color) {
@@ -66,14 +49,14 @@ function init() {
     //collide top side
     if(player.x >= this.x &&
       player.x <= this.x + this.width &&
-      player.y + playerSize === this.y) {
+      player.y + playerSize === this.y + playerSpeed) {
         collision = true;
         collideTop = true;
       }
 
     else if(player.x + playerSize >= this.x &&
       player.x + playerSize <= this.x + this.width &&
-      player.y + playerSize === this.y) {
+      player.y + playerSize === this.y + playerSpeed) {
         collideTop = true;
         collision = true;
       }
@@ -81,14 +64,14 @@ function init() {
     //collide bottom side
     else if(player.x >= this.x &&
       player.x <= this.x + this.width &&
-      player.y === this.y + this.height){
+      player.y === this.y + this.height - playerSpeed){
         collideBot = true;
         collision = true;
       }
 
     else if(player.x + playerSize >= this.x &&
       player.x + playerSize <= this.x + this.width &&
-      player.y === this.y + this.height){
+      player.y === this.y + this.height - playerSpeed){
         collideBot = true;
         collision = true;
       }
@@ -96,14 +79,14 @@ function init() {
     //collide right side
     else if(player.y >= this.y &&
       player.y <= this.y + this.height &&
-      player.x + playerSize === this.x){
+      player.x + playerSize === this.x + playerSpeed){
         collideRight = true;
         collision = true;
       }
 
     else if(player.y + playerSize >= this.y &&
       player.y + playerSize <= this.y + this.height &&
-      player.x + playerSize === this.x){
+      player.x + playerSize === this.x + playerSpeed){
         collideRight = true;
         collision = true;
       }
@@ -111,14 +94,14 @@ function init() {
     //collide left side
     else if(player.y >= this.y &&
       player.y <= this.y + this.height &&
-      player.x === this.x + this.width){
+      player.x === this.x + this.width - playerSpeed){
         collideLeft = true;
         collision = true;
       }
 
     else if(player.y + playerSize >= this.y &&
       player.y + playerSize <= this.y + this.height &&
-      player.x === this.x + this.width){
+      player.x === this.x + this.width - playerSpeed){
         collideLeft = true;
         collision = true;
       }
@@ -128,47 +111,65 @@ function init() {
       }
   };
 
+  var wallTop = new Wall(0,0,900,10, "gray");
+  wallTop.show();
 
-  var wall = new Wall(300, 200, 50, 10, "white");
+  var wallBot = new Wall(0,490,900,10, "gray");
+  wallBot.show();
+
+  var wallRight = new Wall(890,0,10,500, "gray");
+  wallRight.show();
+
+  var wallLeft = new Wall(0,0,10,500, "gray");
+  wallLeft.show();
+
+  var wall = new Wall(150, 0, 10, 135, "gray");
   wall.show();
 
-  var wall2 = new Wall(200, 300, 50, 10, "white");
+  var wall2 = new Wall(0, 125, 90, 10, "gray");
   wall2.show();
 
   createjs.Ticker.addEventListener("tick", tick);
 
   function tick() {
 
-    if (lfHeld && !collision) {
-      player.x -= 5;
-    } else if (rtHeld && !collision) {
-      player.x += 5;
-    } else if (fwdHeld && !collision) {
-      player.y -= 5;
-    } else if (backHeld && !collision) {
-      player.y += 5;
-    }
-
+    wallTop.collide();
+    wallBot.collide();
+    wallRight.collide();
+    wallLeft.collide();
     wall.collide();
     wall2.collide();
-    // console.log(player.x, player.y)
-    // console.log(wall.x, wall.y)
+
+
+    if (lfHeld && !collision) {
+      player.x -= playerSpeed;
+    } else if (rtHeld && !collision) {
+      player.x += playerSpeed;
+    } else if (fwdHeld && !collision) {
+      player.y -= playerSpeed;
+    } else if (backHeld && !collision) {
+      player.y += playerSpeed;
+    }
 
     if (collideLeft) {
-      player.x += 5;
+      player.x += playerSpeed;
       collideLeft = false;
+      collision = false;
     }
     else if (collideRight) {
-      player.x -= 5;
+      player.x -= playerSpeed;
       collideRight = false;
+      collision = false;
     }
     else if (collideTop) {
-      player.y -= 5;
+      player.y -= playerSpeed;
       collideTop = false;
+      collision = false;
     }
     else if (collideBot) {
-      player.y += 5;
+      player.y += playerSpeed;
       collideBot = false;
+      collision = false;
     }
 
     stage.update();
@@ -218,71 +219,4 @@ function init() {
         break;
     }
   }
-
-  // function collide(player, wall) {
-  //   //collide top side
-  //   if(player.x > wall.x &&
-  //     player.x < wall.x + 50 &&
-  //     player.y + playerSize === wall.y) {
-  //       collideTop = true;
-  //       return true;
-  //   }
-  //
-  //   else if(player.x + playerSize > wall.x &&
-  //     player.x + playerSize < wall.x + 50 &&
-  //     player.y + playerSize === wall.y) {
-  //       collideTop = true;
-  //       return true;
-  //     }
-  //
-  //   //collide bottom side
-  //   else if(player.x > wall.x &&
-  //     player.x < wall.x + 50 &&
-  //     player.y === wall.y + 10){
-  //       collideBot = true;
-  //       return true;
-  //     }
-  //
-  //   else if(player.x + playerSize > wall.x &&
-  //     player.x + playerSize < wall.x + 50 &&
-  //     player.y === wall.y + 10){
-  //       collideBot = true;
-  //       return true;
-  //     }
-  //
-  //   //collide right side
-  //   else if(player.y >= wall.y &&
-  //     player.y <= wall.y + 10 &&
-  //     player.x + playerSize === wall.x){
-  //       collideRight = true;
-  //       return true;
-  //     }
-  //
-  //   else if(player.y + playerSize >= wall.y &&
-  //     player.y + playerSize <= wall.y + 10 &&
-  //     player.x + playerSize === wall.x){
-  //       collideRight = true;
-  //       return true;
-  //     }
-  //
-  //   //collide left side
-  //   else if(player.y >= wall.y &&
-  //     player.y <= wall.y + 10 &&
-  //     player.x === wall.x + 50){
-  //       collideLeft = true;
-  //       return true;
-  //     }
-  //
-  //   else if(player.y + playerSize >= wall.y &&
-  //     player.y + playerSize <= wall.y + 10&&
-  //     player.x === wall.x + 50){
-  //       collideLeft = true;
-  //       return true;
-  //     }
-  //   //no collision
-  //   else {
-  //     return false;
-  //   }
-  //}
-
 }
