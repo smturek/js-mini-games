@@ -7,6 +7,8 @@ function init() {
   var fwdHeld;
   var backHeld;
 
+  var playerSize = 10;
+
   var collideRight = false;
   var collideLeft = false;
   var collideTop = false;
@@ -21,25 +23,25 @@ function init() {
   document.onkeyup = handleKeyUp;
 
   var player = new createjs.Shape();
-  player.graphics.beginFill("red").drawRect(0, 0, 10, 10);
+  player.graphics.beginFill("red").drawRect(0, 0, playerSize, playerSize);
   player.x = 10;
   player.y = 10;
   stage.addChild(player);
 
   var wallTop = new createjs.Shape();
-  wallTop.graphics.beginFill("white").drawRect(0,0,900,10);
+  wallTop.graphics.beginFill("gray").drawRect(0,0,900,10);
   stage.addChild(wallTop);
 
   var wallBot = new createjs.Shape();
-  wallBot.graphics.beginFill("white").drawRect(0,490,900,10);
+  wallBot.graphics.beginFill("gray").drawRect(0,490,900,10);
   stage.addChild(wallBot);
 
   var wallRight = new createjs.Shape();
-  wallRight.graphics.beginFill("white").drawRect(890,0,10,500);
+  wallRight.graphics.beginFill("gray").drawRect(890,0,10,500);
   stage.addChild(wallRight);
 
   var wallLeft = new createjs.Shape();
-  wallLeft.graphics.beginFill("white").drawRect(0,0,10,500);
+  wallLeft.graphics.beginFill("gray").drawRect(0,0,10,500);
   stage.addChild(wallLeft);
 
   var wall = new createjs.Shape();
@@ -47,6 +49,22 @@ function init() {
   wall.x = 300;
   wall.y = 200;
   stage.addChild(wall);
+  
+  //Wall Class
+  var Wall = function(x, y, width, height, color) {
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+    this.color = color;
+  };
+
+  Wall.prototype.show = function() {
+    var visual = new createjs.Shape();
+    visual.graphics.beginFill(this.color).drawRect(this.x, this.y, this.width, this.height);
+    stage.addChild(visual);
+  };
+
 
   createjs.Ticker.addEventListener("tick", tick);
 
@@ -134,14 +152,14 @@ function init() {
     //collide top side
     if(player.x > wall.x &&
       player.x < wall.x + 50 &&
-      player.y + 10 === wall.y) {
+      player.y + playerSize === wall.y) {
         collideTop = true;
         return true;
     }
 
-    else if(player.x + 10 > wall.x &&
-      player.x + 10 < wall.x + 50 &&
-      player.y + 10 === wall.y) {
+    else if(player.x + playerSize > wall.x &&
+      player.x + playerSize < wall.x + 50 &&
+      player.y + playerSize === wall.y) {
         collideTop = true;
         return true;
       }
@@ -154,8 +172,8 @@ function init() {
         return true;
       }
 
-    else if(player.x + 10 > wall.x &&
-      player.x + 10 < wall.x + 50 &&
+    else if(player.x + playerSize > wall.x &&
+      player.x + playerSize < wall.x + 50 &&
       player.y === wall.y + 10){
         collideBot = true;
         return true;
@@ -164,14 +182,14 @@ function init() {
     //collide right side
     else if(player.y >= wall.y &&
       player.y <= wall.y + 10 &&
-      player.x + 10 === wall.x){
+      player.x + playerSize === wall.x){
         collideRight = true;
         return true;
       }
 
-    else if(player.y + 10 >= wall.y &&
-      player.y + 10 <= wall.y + 10 &&
-      player.x + 10 === wall.x){
+    else if(player.y + playerSize >= wall.y &&
+      player.y + playerSize <= wall.y + 10 &&
+      player.x + playerSize === wall.x){
         collideRight = true;
         return true;
       }
@@ -184,8 +202,8 @@ function init() {
         return true;
       }
 
-    else if(player.y + 10 >= wall.y &&
-      player.y + 10 <= wall.y + 10&&
+    else if(player.y + playerSize >= wall.y &&
+      player.y + playerSize <= wall.y + 10&&
       player.x === wall.x + 50){
         collideLeft = true;
         return true;
