@@ -64,30 +64,30 @@ function init() {
 
   Wall.prototype.collide = function() {
     //collide top side
-    if(player.x > this.x &&
-      player.x < this.x + this.width &&
+    if(player.x >= this.x &&
+      player.x <= this.x + this.width &&
       player.y + playerSize === this.y) {
-        collideTop = true;
         collision = true;
+        collideTop = true;
       }
 
-    else if(player.x + playerSize > this.x &&
-      player.x + playerSize < this.x + this.width &&
+    else if(player.x + playerSize >= this.x &&
+      player.x + playerSize <= this.x + this.width &&
       player.y + playerSize === this.y) {
         collideTop = true;
         collision = true;
       }
 
     //collide bottom side
-    else if(player.x > this.x &&
-      player.x < this.x + this.width &&
+    else if(player.x >= this.x &&
+      player.x <= this.x + this.width &&
       player.y === this.y + this.height){
         collideBot = true;
         collision = true;
       }
 
-    else if(player.x + playerSize > this.x &&
-      player.x + playerSize < this.x + this.width &&
+    else if(player.x + playerSize >= this.x &&
+      player.x + playerSize <= this.x + this.width &&
       player.y === this.y + this.height){
         collideBot = true;
         collision = true;
