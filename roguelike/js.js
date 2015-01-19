@@ -39,6 +39,12 @@ function init() {
     this.color = color;
   };
 
+  Monster.prototype.show = function() {
+    var monster = new createjs.Shape();
+    monster.graphics.beginFill(this.color).drawRect(this.x, this.y, this.width, this.height);
+    stage.addChild(monster);
+  };
+
   //Wall Class
   var Wall = function(x, y, width, height, color) {
     this.x = x;
@@ -120,6 +126,9 @@ function init() {
       }
   };
 
+  var monster = new Monster(200, 400, 10, 10, 'red')
+  monster.show();
+
   var wallTop = new Wall(0,0,900,10, "gray");
   wallTop.show();
 
@@ -132,11 +141,29 @@ function init() {
   var wallLeft = new Wall(0,0,10,500, "gray");
   wallLeft.show();
 
-  var wall = new Wall(130, 0, 10, 270, "gray");
+  var wall = new Wall(130, 0, 10, 280, "gray");
   wall.show();
 
   var wall2 = new Wall(0, 125, 90, 10, "gray");
   wall2.show();
+
+  var wall3 = new Wall(0, 325, 250, 10, "gray");
+  wall3.show();
+
+  var wall4 = new Wall(290, 325, 50, 10, "gray");
+  wall4.show();
+
+  var wall5 = new Wall(340, 325, 10, 200, 'gray');
+  wall5.show();
+
+  var wall6 = new Wall(130, 280, 50, 10, 'gray');
+  wall6.show();
+
+  var wall7 = new Wall(220, 280, 130, 10, 'gray');
+  wall7.show();
+
+  var wall8 = new Wall(340, 0, 10, 280, 'gray');
+  wall8.show();
 
   createjs.Ticker.addEventListener("tick", tick);
 
@@ -148,6 +175,12 @@ function init() {
     wallLeft.collide();
     wall.collide();
     wall2.collide();
+    wall3.collide();
+    wall4.collide();
+    wall5.collide();
+    wall6.collide();
+    wall7.collide();
+    wall8.collide();
 
 
     if (lfHeld && !collision) {
