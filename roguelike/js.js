@@ -30,6 +30,15 @@ function init() {
   player.y = 10;
   stage.addChild(player);
 
+  //Monster Class
+  var Monster = function(x, y, width, height, color) {
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+    this.color = color;
+  };
+
   //Wall Class
   var Wall = function(x, y, width, height, color) {
     this.x = x;
@@ -123,7 +132,7 @@ function init() {
   var wallLeft = new Wall(0,0,10,500, "gray");
   wallLeft.show();
 
-  var wall = new Wall(150, 0, 10, 135, "gray");
+  var wall = new Wall(130, 0, 10, 270, "gray");
   wall.show();
 
   var wall2 = new Wall(0, 125, 90, 10, "gray");
