@@ -1,14 +1,22 @@
 function init() {
 
   var stage = new createjs.Stage("roguelikeCanvas");
+  var statusStage = new createjs.Stage("statusBar");
 
   var lfHeld;
   var rtHeld;
   var fwdHeld;
   var backHeld;
 
+
+  //use eval() in line 138 instead?
+  var life = new createjs.Shape();
+  var life2 = new createjs.Shape();
+  var life3 = new createjs.Shape();
+
   var playerSize = 10;
   var playerSpeed = 5;
+  var playerHealth = [life, life2, life3];
 
   var collision = false;
   var collideRight = false;
@@ -125,6 +133,13 @@ function init() {
         return false;
       }
   };
+
+  //handles status bar
+  for(var i = 0; i < playerHealth.length; i++) {
+    playerHealth[i].graphics.beginFill("red").drawCircle(840 + 20*i, 20, 5);
+    stage.addChild(playerHealth[i]);
+  }
+
 
   var monster = new Monster(200, 400, 10, 10, 'red')
   monster.show();

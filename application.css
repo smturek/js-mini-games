@@ -48,6 +48,10 @@ canvas {
   background: black;
 }
 
+#statusBar {
+  border: none;
+}
+
 #ebCanvas {
   position: absolute;
   top: 100px;
