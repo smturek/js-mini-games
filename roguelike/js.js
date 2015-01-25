@@ -8,15 +8,10 @@ function init() {
   var fwdHeld;
   var backHeld;
 
-
-  //use eval() in line 138 instead?
-  var life = new createjs.Shape();
-  var life2 = new createjs.Shape();
-  var life3 = new createjs.Shape();
-
   var playerSize = 10;
   var playerSpeed = 5;
-  var playerHealth = [life, life2, life3];
+  var playerMaxHealth = 6;
+  var playerHealthBar = [];
 
   var collision = false;
   var collideRight = false;
@@ -135,9 +130,10 @@ function init() {
   };
 
   //handles status bar
-  for(var i = 0; i < playerHealth.length; i++) {
-    playerHealth[i].graphics.beginFill("red").drawCircle(840 + 20*i, 20, 5);
-    stage.addChild(playerHealth[i]);
+  for(var i = 0; i < playerMaxHealth; i++) {
+    playerHealthBar[i] = new createjs.Shape();
+    playerHealthBar[i].graphics.beginFill("red").drawCircle(880 - 20*i, 20, 5);
+    stage.addChild(playerHealthBar[i]);
   }
 
 
