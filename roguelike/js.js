@@ -6,6 +6,7 @@ function init() {
   var rtHeld;
   var fwdHeld;
   var backHeld;
+  var shoot;
 
   var walls = [];
   var wallThickness = 20;
@@ -27,6 +28,7 @@ function init() {
   var KEYCODE_W = 87;
   var KEYCODE_A = 65;
   var KEYCODE_D = 68;
+  var KEYCODE_SPACE = 32;
 
   document.onkeydown = handleKeyDown;
   document.onkeyup = handleKeyUp;
@@ -37,9 +39,20 @@ function init() {
   player.y = 20;
   stage.addChild(player);
 
-  var bullet = new createjs.Shape();
-  bullet.graphics.beginFill("yellow").drawPolyStar(50,50, 2, 5, 5, 50);
-  stage.addChild(bullet);
+  //Bullet class
+  var Bullet = function(x, y, radius, points, color){
+    this.x = x;
+    this.y = y;
+    this.radius = radius;
+    this.points = points;
+    this.color = color;
+  };
+
+  Bullet.prototype.show = function() {
+    var bullet = new createjs.Shape();
+    bullet.graphics.beginFill(this.color).drawPolyStar(this.x,this.y, this.radius, this.points, 5, -90);
+    stage.addChild(bullet);
+  }
 
   //Monster Class
   var Monster = function(x, y, width, height, color) {
@@ -165,6 +178,7 @@ function init() {
       walls[i].collide();
     }
 
+    //movement
     if (lfHeld && !collision) {
       player.x -= playerSpeed;
     } else if (rtHeld && !collision) {
@@ -174,6 +188,9 @@ function init() {
     } else if (backHeld && !collision) {
       player.y += playerSpeed;
     }
+
+    //shooting
+    if (shoot)
 
     if (collideLeft) {
       player.x += playerSpeed;
@@ -219,6 +236,9 @@ function init() {
       case KEYCODE_S:
         backHeld = true;
         return false;
+      case KEYCODE_SPACE:
+        shoot = true;
+        return false;
     }
   }
 
@@ -240,6 +260,9 @@ function init() {
         break;
       case KEYCODE_S:
         backHeld = false;
+        break;
+      case KEYCODE_SPACE:
+        shoot = false;
         break;
     }
   }
