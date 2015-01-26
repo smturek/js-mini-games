@@ -1,17 +1,21 @@
 function init() {
 
   var stage = new createjs.Stage("roguelikeCanvas");
-  var statusStage = new createjs.Stage("statusBar");
 
   var lfHeld;
   var rtHeld;
   var fwdHeld;
   var backHeld;
 
-  var playerSize = 10;
-  var playerSpeed = 5;
-  var playerMaxHealth = 6;
+  var walls = [];
+  var wallThickness = 20;
+
+  var playerSize = 20;
+  var playerSpeed = 10;
+  var playerMaxHealth = 6 ;
   var playerHealthBar = [];
+
+  var monsterSize = 20;
 
   var collision = false;
   var collideRight = false;
@@ -29,8 +33,8 @@ function init() {
 
   var player = new createjs.Shape();
   player.graphics.beginFill("blue").drawRect(0, 0, playerSize, playerSize);
-  player.x = 10;
-  player.y = 10;
+  player.x = 20;
+  player.y = 20;
   stage.addChild(player);
 
   //Monster Class
@@ -132,67 +136,30 @@ function init() {
   //handles status bar
   for(var i = 0; i < playerMaxHealth; i++) {
     playerHealthBar[i] = new createjs.Shape();
-    playerHealthBar[i].graphics.beginFill("red").drawCircle(880 - 20*i, 20, 5);
+    playerHealthBar[i].graphics.beginFill("red").drawCircle(870 - 20*i, 30, 5);
     stage.addChild(playerHealthBar[i]);
   }
 
 
-  var monster = new Monster(200, 400, 10, 10, 'red')
+  var monster = new Monster(200, 400, monsterSize, monsterSize, 'red')
   monster.show();
 
-  var wallTop = new Wall(0,0,900,10, "gray");
-  wallTop.show();
+  walls.push(new Wall(0,0,900,wallThickness, "gray"));
+  walls.push(new Wall(0,480,900,wallThickness, "gray"));
+  walls.push(new Wall(880,0,wallThickness,500, "gray"));
+  walls.push(new Wall(0,0,wallThickness,500, "gray"));
 
-  var wallBot = new Wall(0,490,900,10, "gray");
-  wallBot.show();
-
-  var wallRight = new Wall(890,0,10,500, "gray");
-  wallRight.show();
-
-  var wallLeft = new Wall(0,0,10,500, "gray");
-  wallLeft.show();
-
-  var wall = new Wall(130, 0, 10, 280, "gray");
-  wall.show();
-
-  var wall2 = new Wall(0, 125, 90, 10, "gray");
-  wall2.show();
-
-  var wall3 = new Wall(0, 325, 250, 10, "gray");
-  wall3.show();
-
-  var wall4 = new Wall(290, 325, 50, 10, "gray");
-  wall4.show();
-
-  var wall5 = new Wall(340, 325, 10, 200, 'gray');
-  wall5.show();
-
-  var wall6 = new Wall(130, 280, 50, 10, 'gray');
-  wall6.show();
-
-  var wall7 = new Wall(220, 280, 130, 10, 'gray');
-  wall7.show();
-
-  var wall8 = new Wall(340, 0, 10, 280, 'gray');
-  wall8.show();
+  for(var i = 0; i < walls.length; i++) {
+    walls[i].show();
+  }
 
   createjs.Ticker.addEventListener("tick", tick);
 
   function tick() {
 
-    wallTop.collide();
-    wallBot.collide();
-    wallRight.collide();
-    wallLeft.collide();
-    wall.collide();
-    wall2.collide();
-    wall3.collide();
-    wall4.collide();
-    wall5.collide();
-    wall6.collide();
-    wall7.collide();
-    wall8.collide();
-
+    for(var i = 0; i < walls.length; i++) {
+      walls[i].collide();
+    }
 
     if (lfHeld && !collision) {
       player.x -= playerSpeed;
