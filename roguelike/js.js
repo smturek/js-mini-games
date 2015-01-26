@@ -37,6 +37,10 @@ function init() {
   player.y = 20;
   stage.addChild(player);
 
+  var bullet = new createjs.Shape();
+  bullet.graphics.beginFill("yellow").drawPolyStar(50,50, 2, 5, 5, 50);
+  stage.addChild(bullet);
+
   //Monster Class
   var Monster = function(x, y, width, height, color) {
     this.x = x;
