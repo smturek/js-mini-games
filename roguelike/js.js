@@ -20,8 +20,8 @@ function init() {
   var playerMaxHealth = 6 ;
   var playerHealthBar = [];
 
-  var monsters = [];
-  var monsterAmount;
+  var actors = [];
+
   var monsterSize = 20;
 
   var collision = false;
@@ -80,61 +80,20 @@ function init() {
   };
 
   var displayLevel = function() {
-    
-  }
+    var currentLevel = generateLevel();
 
-  var player = new createjs.Shape();
-  player.graphics.beginFill("blue").drawRect(0, 0, playerSize, playerSize);
-  player.x = 20;
-  player.y = 20;
-  stage.addChild(player);
+    //gets sectors
+    for(var i = 0; i < currentLevel.length; i++) {
+      //gets blocks
+      for(var j = 0; j < currentLevel[i].length; i++) {
+        var x = 20;
+        var y = 20;
 
-  //Bullet class
-  var Bullet = function(x, y, radius, points, color){
-    this.x = x;
-    this.y = y;
-    this.radius = radius;
-    this.points = points;
-    this.color = color;
+      }
+    }
   };
 
-  Bullet.prototype.show = function() {
-    var bullet = new createjs.Shape();
-    bullet.graphics.beginFill(this.color).drawPolyStar(this.x,this.y, this.radius, this.points, 5, -90);
-    stage.addChild(bullet);
-  };
-
-  //Monster Class
-  var Monster = function(x, y, width, height, color) {
-    this.x = x;
-    this.y = y;
-    this.width = width;
-    this.height = height;
-    this.color = color;
-  };
-
-  Monster.prototype.show = function() {
-    var monster = new createjs.Shape();
-    monster.graphics.beginFill(this.color).drawRect(this.x, this.y, this.width, this.height);
-    stage.addChild(monster);
-  };
-
-  //Wall Class
-  var Wall = function(x, y, width, height, color) {
-    this.x = x;
-    this.y = y;
-    this.width = width;
-    this.height = height;
-    this.color = color;
-  };
-
-  Wall.prototype.show = function() {
-    var visual = new createjs.Shape();
-    visual.graphics.beginFill(this.color).drawRect(this.x, this.y, this.width, this.height);
-    stage.addChild(visual);
-  };
-
-  Wall.prototype.collide = function() {
+  var collide = function() {
     //collide top side
     if(player.x >= this.x &&
       player.x <= this.x + this.width &&
@@ -199,6 +158,59 @@ function init() {
         return false;
       }
   };
+  var player = new createjs.Shape();
+  player.graphics.beginFill("blue").drawRect(0, 0, playerSize, playerSize);
+  player.x = 20;
+  player.y = 20;
+  stage.addChild(player);
+
+  //Bullet class
+  var Bullet = function(x, y, radius, points, color){
+    this.x = x;
+    this.y = y;
+    this.radius = radius;
+    this.points = points;
+    this.color = color;
+  };
+
+  Bullet.prototype.show = function() {
+    var bullet = new createjs.Shape();
+    bullet.graphics.beginFill(this.color).drawPolyStar(this.x,this.y, this.radius, this.points, 5, -90);
+    stage.addChild(bullet);
+  };
+
+  //Monster Class
+  var Monster = function(x, y, width, height, color) {
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+    this.color = color;
+  };
+
+  Monster.prototype.show = function() {
+    var monster = new createjs.Shape();
+    monster.graphics.beginFill(this.color).drawRect(this.x, this.y, this.width, this.height);
+    stage.addChild(monster);
+  };
+
+  //Wall Class
+  var Wall = function(x, y, width, height, color) {
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+    this.color = color;
+  };
+
+  Wall.prototype.show = function() {
+    var visual = new createjs.Shape();
+    visual.graphics.beginFill(this.color).drawRect(this.x, this.y, this.width, this.height);
+    stage.addChild(visual);
+  };
+
+  Wall.prototype.collide = collide;
+
 
   //test grid
   var grid = [];
@@ -245,9 +257,11 @@ function init() {
     walls[i].show();
   }
 
-  createjs.Ticker.addEventListener("tick", tick);
+  for(var i = 0; i < actors.length; i++) {
+    actors[i].show();
+  }
 
-  console.log(generateLevel());
+  createjs.Ticker.addEventListener("tick", tick);
 
   function tick() {
 
