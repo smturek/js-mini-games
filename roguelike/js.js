@@ -8,6 +8,10 @@ function init() {
   var backHeld;
   var shoot;
 
+  var blocksInSector = 25;
+  var sectorsInLevel = 45;
+  var exit = false;
+
   var walls = [];
   var wallThickness = 20;
 
@@ -16,6 +20,8 @@ function init() {
   var playerMaxHealth = 6 ;
   var playerHealthBar = [];
 
+  var monsters = [];
+  var monsterAmount;
   var monsterSize = 20;
 
   var collision = false;
@@ -32,6 +38,50 @@ function init() {
 
   document.onkeydown = handleKeyDown;
   document.onkeyup = handleKeyUp;
+
+  var generateBlock = function() {
+    var seed = Math.random();
+    var block = 0;
+    //exit
+    if(seed <= .01 && !exit) {
+      block = 3;
+      exit == true;
+    }
+    //treasure
+    else if(seed <= .03) {
+      block = 2;
+    }
+    //monster
+    else if(seed <= .13) {
+      block = 1;
+    }
+    //empty block
+    else {
+      block = 0;
+    }
+    return block;
+  };
+
+  var generateSector = function() {
+    var sector = [];
+
+    for(var i = 0; i < blocksInSector; i++) {
+      sector[i] = generateBlock();
+    }
+    return sector;
+  };
+
+  var generateLevel = function() {
+    var level = [];
+    for(var i = 0; i < sectorsInLevel; i++) {
+      level[i] = generateSector();
+    }
+    return level;
+  };
+
+  var displayLevel = function() {
+    
+  }
 
   var player = new createjs.Shape();
   player.graphics.beginFill("blue").drawRect(0, 0, playerSize, playerSize);
@@ -52,7 +102,7 @@ function init() {
     var bullet = new createjs.Shape();
     bullet.graphics.beginFill(this.color).drawPolyStar(this.x,this.y, this.radius, this.points, 5, -90);
     stage.addChild(bullet);
-  }
+  };
 
   //Monster Class
   var Monster = function(x, y, width, height, color) {
@@ -150,6 +200,31 @@ function init() {
       }
   };
 
+  //test grid
+  var grid = [];
+
+  //y lines
+  grid.push(new Wall(20, 20, 900, 1, "yellow"));
+  grid.push(new Wall(20, 120, 900, 1, "yellow"));
+  grid.push(new Wall(20, 220, 900, 1, "yellow"));
+  grid.push(new Wall(20, 320, 900, 1, "yellow"));
+  grid.push(new Wall(20, 420, 900, 1, "yellow"));
+
+  //x lines
+  grid.push(new Wall(20, 20, 1, 500, "yellow"));
+  grid.push(new Wall(120, 20, 1, 500, "yellow"));
+  grid.push(new Wall(220, 20, 1, 500, "yellow"));
+  grid.push(new Wall(320, 20, 1, 500, "yellow"));
+  grid.push(new Wall(420, 20, 1, 500, "yellow"));
+  grid.push(new Wall(520, 20, 1, 500, "yellow"));
+  grid.push(new Wall(620, 20, 1, 500, "yellow"));
+  grid.push(new Wall(720, 20, 1, 500, "yellow"));
+  grid.push(new Wall(820, 20, 1, 500, "yellow"));
+
+  for(var i = 0; i < grid.length; i++) {
+    grid[i].show();
+  }
+
   //handles status bar
   for(var i = 0; i < playerMaxHealth; i++) {
     playerHealthBar[i] = new createjs.Shape();
@@ -161,16 +236,18 @@ function init() {
   var monster = new Monster(200, 400, monsterSize, monsterSize, 'red')
   monster.show();
 
-  walls.push(new Wall(0,0,900,wallThickness, "gray"));
-  walls.push(new Wall(0,480,900,wallThickness, "gray"));
-  walls.push(new Wall(880,0,wallThickness,500, "gray"));
-  walls.push(new Wall(0,0,wallThickness,500, "gray"));
+  walls.push(new Wall(0,0,940,wallThickness, "gray"));
+  walls.push(new Wall(0,520,940,wallThickness, "gray"));
+  walls.push(new Wall(920,0,wallThickness,540, "gray"));
+  walls.push(new Wall(0,0,wallThickness,540, "gray"));
 
   for(var i = 0; i < walls.length; i++) {
     walls[i].show();
   }
 
   createjs.Ticker.addEventListener("tick", tick);
+
+  console.log(generateLevel());
 
   function tick() {
 
@@ -190,7 +267,7 @@ function init() {
     }
 
     //shooting
-    if (shoot)
+    //if (shoot)
 
     if (collideLeft) {
       player.x += playerSpeed;
