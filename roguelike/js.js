@@ -43,16 +43,16 @@ function init() {
     var seed = Math.random();
     var block = 0;
     //exit
-    if(seed <= .01 && !exit) {
+    if(seed <= .02 && !exit) {
       block = 3;
-      exit == true;
+      exit = true;
     }
     //treasure
-    else if(seed <= .03) {
+    else if(seed <= .04) {
       block = 2;
     }
     //monster
-    else if(seed <= .13) {
+    else if(seed <= .14) {
       block = 1;
     }
     //empty block
@@ -74,22 +74,100 @@ function init() {
   var generateLevel = function() {
     var level = [];
     for(var i = 0; i < sectorsInLevel; i++) {
-      level[i] = generateSector();
+      if(i === 0) {
+        level[i] = [0];
+      }
+      else {
+        level[i] = generateSector();
+      }
     }
     return level;
   };
 
   var displayLevel = function() {
     var currentLevel = generateLevel();
+    console.log(currentLevel);
+
+    var blockX;
+    var blockY;
+    var sectorX;
+    var sectorY;
+    var color;
+
+    console.log(exit);
+
+    //if no exit
+    if(!exit) {
+      var sector = Math.floor(Math.random() * (45 - 1)) + 1;
+      var block = Math.floor(Math.random() * (25 - 0)) + 0;
+      console.log(sector, block)
+    }
 
     //gets sectors
     for(var i = 0; i < currentLevel.length; i++) {
-      //gets blocks
-      for(var j = 0; j < currentLevel[i].length; i++) {
-        var x = 20;
-        var y = 20;
 
+      var currentSector = currentLevel[i];
+
+      if(i < 9) {
+        sectorX = 100*i + 20
+        sectorY = 20;
       }
+      else if(i < 18) {
+        sectorX = 100*(i-9) + 20
+        sectorY = 120;
+      }
+      else if(i < 27) {
+        sectorX = 100*(i-18) + 20
+        sectorY = 220;
+      }
+      else if(i < 36) {
+        sectorX = 100*(i-27) + 20
+        sectorY = 320;
+      }
+      else {
+        sectorX = 100*(i-36) + 20
+        sectorY = 420;
+      }
+      //gets blocks
+      for(var j = 0; j < currentSector.length; j++) {
+
+        var currentBlock = currentSector[j];
+
+        if(j < 5) {
+          blockX = sectorX + (20 * j)
+          blockY = sectorY;
+        }
+        else if(j < 10) {
+          blockX = sectorX + (20 * (j - 5))
+          blockY = sectorY + 20;
+        }
+        else if(i < 15) {
+          blockX = sectorX + (20 * (j - 10))
+          blockY = sectorY + 40;
+        }
+        else if(i < 20) {
+          blockX = sectorX + (20 * (j - 15))
+          blockY = sectorY + 60;
+        }
+        else {
+          blockX = sectorX + (20 * (j - 20))
+          blockY = sectorY + 80;
+        }
+      }
+
+      if(currentBlock === 1) {
+        color = "red";
+        actors.push(new Wall(blockX, blockY, 20, 20, color));
+      }
+      else if(currentBlock === 2) {
+        color = "yellow";
+        actors.push(new Wall(blockX, blockY, 20, 20, color));
+      }
+      if(currentBlock === 3) {
+        color = "purple";
+        actors.push(new Wall(blockX, blockY, 20, 20, color));
+      }
+
     }
   };
 
@@ -211,7 +289,6 @@ function init() {
 
   Wall.prototype.collide = collide;
 
-
   //test grid
   var grid = [];
 
@@ -240,22 +317,27 @@ function init() {
   //handles status bar
   for(var i = 0; i < playerMaxHealth; i++) {
     playerHealthBar[i] = new createjs.Shape();
-    playerHealthBar[i].graphics.beginFill("red").drawCircle(870 - 20*i, 30, 5);
+    playerHealthBar[i].graphics.beginFill("red").drawCircle(910 - 20*i, 30, 5);
     stage.addChild(playerHealthBar[i]);
   }
 
 
-  var monster = new Monster(200, 400, monsterSize, monsterSize, 'red')
-  monster.show();
+  // var monster = new Monster(200, 400, monsterSize, monsterSize, 'red')
+  // monster.show();
 
   walls.push(new Wall(0,0,940,wallThickness, "gray"));
   walls.push(new Wall(0,520,940,wallThickness, "gray"));
   walls.push(new Wall(920,0,wallThickness,540, "gray"));
   walls.push(new Wall(0,0,wallThickness,540, "gray"));
 
+  //generate level
+  displayLevel();
+
   for(var i = 0; i < walls.length; i++) {
     walls[i].show();
   }
+
+  console.log(actors);
 
   for(var i = 0; i < actors.length; i++) {
     actors[i].show();
