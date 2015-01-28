@@ -188,8 +188,7 @@ function init() {
       player.y + playerSize === this.y + playerSpeed) {
         collision = true;
         collideTop = true;
-        console.log("collision");
-        handleCollision();
+        this.handleCollision();
       }
 
     else if(player.x + playerSize >= this.x &&
@@ -197,7 +196,7 @@ function init() {
       player.y + playerSize === this.y + playerSpeed) {
         collideTop = true;
         collision = true;
-        handleCollision();
+        this.handleCollision();
       }
 
     //collide bottom side
@@ -206,7 +205,7 @@ function init() {
       player.y === this.y + this.height - playerSpeed){
         collideBot = true;
         collision = true;
-        handleCollision();
+        this.handleCollision();
       }
 
     else if(player.x + playerSize >= this.x &&
@@ -214,7 +213,7 @@ function init() {
       player.y === this.y + this.height - playerSpeed){
         collideBot = true;
         collision = true;
-        handleCollision();
+        this.handleCollision();
       }
 
     //collide right side
@@ -223,7 +222,7 @@ function init() {
       player.x + playerSize === this.x + playerSpeed){
         collideRight = true;
         collision = true;
-        handleCollision();
+        this.handleCollision();
       }
 
     else if(player.y + playerSize >= this.y &&
@@ -231,7 +230,7 @@ function init() {
       player.x + playerSize === this.x + playerSpeed){
         collideRight = true;
         collision = true;
-        handleCollision();
+        this.handleCollision();
       }
 
     //collide left side
@@ -240,7 +239,7 @@ function init() {
       player.x === this.x + this.width - playerSpeed){
         collideLeft = true;
         collision = true;
-        handleCollision();
+        this.handleCollision();
       }
 
     else if(player.y + playerSize >= this.y &&
@@ -248,7 +247,7 @@ function init() {
       player.x === this.x + this.width - playerSpeed){
         collideLeft = true;
         collision = true;
-        handleCollision();
+        this.handleCollision();
       }
       //no collision
       else {
@@ -270,6 +269,8 @@ function init() {
   }
 
   Exit.prototype.collide = collide;
+
+  Exit.prototype.handleCollision = handleCollision;
 
   Exit.prototype.show = function() {
     var exit = new createjs.Shape();
@@ -309,6 +310,8 @@ function init() {
 
   Monster.prototype.collide = collide;
 
+  Monster.prototype.handleCollision = handleCollision;
+
   //Wall Class
   var Wall = function(x, y, width, height, color) {
     this.x = x;
@@ -325,6 +328,7 @@ function init() {
   };
 
   Wall.prototype.collide = collide;
+  Wall.prototype.handleCollision = handleCollision;
 
   //test grid
   var grid = [];
