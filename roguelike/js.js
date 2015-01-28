@@ -84,8 +84,21 @@ function init() {
     return level;
   };
 
+  var handleCollision = function() {
+    if(Object.getPrototypeOf(this) === Monster.prototype) {
+      //turn one of the health bars grey
+      console.log("MONSTER!!")
+    }
+    else if(Object.getPrototypeOf(this) === Exit.prototype) {
+      console.log("should work!")
+      displayLevel();
+    }
+  }
+
   var displayLevel = function() {
     var currentLevel = generateLevel();
+    player.x = 20;
+    player.y = 20;
 
     var blockX;
     var blockY;
@@ -154,7 +167,7 @@ function init() {
 
         if(currentBlock === 1) {
           color = "red";
-          actors.push(new Wall(blockX, blockY, 20, 20, color));
+          actors.push(new Monster(blockX, blockY, 20, 20, color));
         }
         else if(currentBlock === 2) {
           color = "yellow";
@@ -162,7 +175,7 @@ function init() {
         }
         if(currentBlock === 3) {
           color = "purple";
-          actors.push(new Wall(blockX, blockY, 20, 20, color));
+          actors.push(new Exit(blockX, blockY, 20, 20, color));
         }
       }
     }
@@ -175,6 +188,8 @@ function init() {
       player.y + playerSize === this.y + playerSpeed) {
         collision = true;
         collideTop = true;
+        console.log("collision");
+        handleCollision();
       }
 
     else if(player.x + playerSize >= this.x &&
@@ -182,6 +197,7 @@ function init() {
       player.y + playerSize === this.y + playerSpeed) {
         collideTop = true;
         collision = true;
+        handleCollision();
       }
 
     //collide bottom side
@@ -190,6 +206,7 @@ function init() {
       player.y === this.y + this.height - playerSpeed){
         collideBot = true;
         collision = true;
+        handleCollision();
       }
 
     else if(player.x + playerSize >= this.x &&
@@ -197,6 +214,7 @@ function init() {
       player.y === this.y + this.height - playerSpeed){
         collideBot = true;
         collision = true;
+        handleCollision();
       }
 
     //collide right side
@@ -205,6 +223,7 @@ function init() {
       player.x + playerSize === this.x + playerSpeed){
         collideRight = true;
         collision = true;
+        handleCollision();
       }
 
     else if(player.y + playerSize >= this.y &&
@@ -212,6 +231,7 @@ function init() {
       player.x + playerSize === this.x + playerSpeed){
         collideRight = true;
         collision = true;
+        handleCollision();
       }
 
     //collide left side
@@ -220,6 +240,7 @@ function init() {
       player.x === this.x + this.width - playerSpeed){
         collideLeft = true;
         collision = true;
+        handleCollision();
       }
 
     else if(player.y + playerSize >= this.y &&
@@ -227,6 +248,7 @@ function init() {
       player.x === this.x + this.width - playerSpeed){
         collideLeft = true;
         collision = true;
+        handleCollision();
       }
       //no collision
       else {
@@ -238,6 +260,22 @@ function init() {
   player.x = 20;
   player.y = 20;
   stage.addChild(player);
+
+  var Exit = function(x, y, width, height, color){
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+    this.color = color;
+  }
+
+  Exit.prototype.collide = collide;
+
+  Exit.prototype.show = function() {
+    var exit = new createjs.Shape();
+    exit.graphics.beginFill(this.color).drawRect(this.x,this.y, this.height, this.width, this.color);
+    stage.addChild(exit);
+  };
 
   //Bullet class
   var Bullet = function(x, y, radius, points, color){
