@@ -17,7 +17,7 @@ function init() {
 
   var playerSize = 20;
   var playerSpeed = 10;
-  var playerMaxHealth = 6 ;
+  var playerMaxHealth = 3 ;
   var playerHealthBar = [];
 
   var actors = [];
@@ -43,16 +43,16 @@ function init() {
     var seed = Math.random();
     var block = 0;
     //exit
-    if(seed <= .02 && !exit) {
+    if(seed <= .0001 && !exit) {
       block = 3;
       exit = true;
     }
     //treasure
-    else if(seed <= .04) {
+    else if(seed <= .001) {
       block = 2;
     }
     //monster
-    else if(seed <= .14) {
+    else if(seed <= .01) {
       block = 1;
     }
     //empty block
@@ -86,7 +86,6 @@ function init() {
 
   var displayLevel = function() {
     var currentLevel = generateLevel();
-    console.log(currentLevel);
 
     var blockX;
     var blockY;
@@ -94,17 +93,15 @@ function init() {
     var sectorY;
     var color;
 
-    console.log(exit);
-
     //if no exit
     if(!exit) {
       var sector = Math.floor(Math.random() * (45 - 1)) + 1;
       var block = Math.floor(Math.random() * (25 - 0)) + 0;
-      console.log(sector, block)
+      currentLevel[sector][block] = 3;
     }
 
     //gets sectors
-    for(var i = 0; i < currentLevel.length; i++) {
+    for(var i = 0; i < currentLevel.length ; i++) {
 
       var currentSector = currentLevel[i];
 
@@ -128,6 +125,7 @@ function init() {
         sectorX = 100*(i-36) + 20
         sectorY = 420;
       }
+
       //gets blocks
       for(var j = 0; j < currentSector.length; j++) {
 
@@ -141,11 +139,11 @@ function init() {
           blockX = sectorX + (20 * (j - 5))
           blockY = sectorY + 20;
         }
-        else if(i < 15) {
+        else if(j < 15) {
           blockX = sectorX + (20 * (j - 10))
           blockY = sectorY + 40;
         }
-        else if(i < 20) {
+        else if(j < 20) {
           blockX = sectorX + (20 * (j - 15))
           blockY = sectorY + 60;
         }
@@ -153,21 +151,20 @@ function init() {
           blockX = sectorX + (20 * (j - 20))
           blockY = sectorY + 80;
         }
-      }
 
-      if(currentBlock === 1) {
-        color = "red";
-        actors.push(new Wall(blockX, blockY, 20, 20, color));
+        if(currentBlock === 1) {
+          color = "red";
+          actors.push(new Wall(blockX, blockY, 20, 20, color));
+        }
+        else if(currentBlock === 2) {
+          color = "yellow";
+          actors.push(new Wall(blockX, blockY, 20, 20, color));
+        }
+        if(currentBlock === 3) {
+          color = "purple";
+          actors.push(new Wall(blockX, blockY, 20, 20, color));
+        }
       }
-      else if(currentBlock === 2) {
-        color = "yellow";
-        actors.push(new Wall(blockX, blockY, 20, 20, color));
-      }
-      if(currentBlock === 3) {
-        color = "purple";
-        actors.push(new Wall(blockX, blockY, 20, 20, color));
-      }
-
     }
   };
 
@@ -272,6 +269,8 @@ function init() {
     stage.addChild(monster);
   };
 
+  Monster.prototype.collide = collide;
+
   //Wall Class
   var Wall = function(x, y, width, height, color) {
     this.x = x;
@@ -349,6 +348,10 @@ function init() {
 
     for(var i = 0; i < walls.length; i++) {
       walls[i].collide();
+    }
+
+    for(var i = 0; i < actors.length; i++) {
+      actors[i].collide();
     }
 
     //movement
