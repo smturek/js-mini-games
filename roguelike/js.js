@@ -20,6 +20,9 @@ function init() {
   var playerMaxHealth = 3;
   var playerCurrentHealth = 3;
   var playerHealthBar = [];
+  var playerAlive = true;
+
+  var floor = 0;
 
   var actors = [];
 
@@ -37,8 +40,14 @@ function init() {
   var KEYCODE_D = 68;
   var KEYCODE_SPACE = 32;
 
+  var lastUpdate = 0;
+
   document.onkeydown = handleKeyDown;
   document.onkeyup = handleKeyUp;
+
+  var gameOver = new createjs.Text("Game Over ", "60px times new roman", "red");
+  gameOver.x = 340;
+  gameOver.y = 220
 
   var generateHealthBar = function() {
     for(var i = 0; i < playerMaxHealth; i++) {
@@ -95,7 +104,9 @@ function init() {
   var handleCollision = function() {
     if(Object.getPrototypeOf(this) === Monster.prototype) {
       playerCurrentHealth--;
-      console.log(playerCurrentHealth);
+      if(playerCurrentHealth === 0) {
+        playerAlive = false;
+      }
     }
     else if(Object.getPrototypeOf(this) === Exit.prototype) {
       exit = false;
@@ -106,6 +117,7 @@ function init() {
   var displayLevel = function() {
     stage.removeAllChildren();
     var currentLevel = generateLevel();
+    floor++;
     actors = null;
     actors = [];
     player.x = 20;
@@ -381,9 +393,6 @@ function init() {
     for(var i = 0; i < actors.length; i++) {
       actors[i].show();
       actors[i].collide();
-      if(Object.getPrototypeOf(actors[i]) === Monster.prototype) {
-        actors[i].move();
-      }
     }
 
     //movement
@@ -421,7 +430,17 @@ function init() {
       collision = false;
     }
 
+    if(lastUpdate === 2) {
+      Ticker.setPaused(true)
+    }
+
+    if(!playerAlive) {
+      stage.addChild(gameOver);
+      lastUpdate++;
+    }
+
     stage.update();
+
   }
 
     //allow for WASD and arrow control scheme
