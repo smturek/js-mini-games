@@ -40,6 +40,12 @@ function init() {
   document.onkeydown = handleKeyDown;
   document.onkeyup = handleKeyUp;
 
+  var generateHealthBar = function() {
+    for(var i = 0; i < playerMaxHealth; i++) {
+      playerHealthBar[i] = new createjs.Shape();
+    }
+  }
+
   var generateBlock = function() {
     var seed = Math.random();
     var block = 0;
@@ -88,7 +94,8 @@ function init() {
 
   var handleCollision = function() {
     if(Object.getPrototypeOf(this) === Monster.prototype) {
-      playerCurrentHealth--
+      playerCurrentHealth--;
+      console.log(playerCurrentHealth);
     }
     else if(Object.getPrototypeOf(this) === Exit.prototype) {
       exit = false;
@@ -318,6 +325,10 @@ function init() {
   Monster.prototype.show = show;
   Monster.prototype.collide = collide;
   Monster.prototype.handleCollision = handleCollision;
+  Monster.prototype.move = function() {
+    this.x += 5;
+    this.y += 5;
+  }
 
   //Wall Class
   var Wall = function(x, y, width, height, color) {
@@ -332,44 +343,9 @@ function init() {
   Wall.prototype.collide = collide;
   Wall.prototype.handleCollision = handleCollision;
 
-  //test grid
-  // var grid = [];
-  //
-  // //y lines
-  // grid.push(new Wall(20, 20, 900, 1, "yellow"));
-  // grid.push(new Wall(20, 120, 900, 1, "yellow"));
-  // grid.push(new Wall(20, 220, 900, 1, "yellow"));
-  // grid.push(new Wall(20, 320, 900, 1, "yellow"));
-  // grid.push(new Wall(20, 420, 900, 1, "yellow"));
-  //
-  // //x lines
-  // grid.push(new Wall(20, 20, 1, 500, "yellow"));
-  // grid.push(new Wall(120, 20, 1, 500, "yellow"));
-  // grid.push(new Wall(220, 20, 1, 500, "yellow"));
-  // grid.push(new Wall(320, 20, 1, 500, "yellow"));
-  // grid.push(new Wall(420, 20, 1, 500, "yellow"));
-  // grid.push(new Wall(520, 20, 1, 500, "yellow"));
-  // grid.push(new Wall(620, 20, 1, 500, "yellow"));
-  // grid.push(new Wall(720, 20, 1, 500, "yellow"));
-  // grid.push(new Wall(820, 20, 1, 500, "yellow"));
-
   //generate level
   displayLevel();
-
-  // for(var i = 0; i < grid.length; i++) {
-  //   grid[i].show();
-  // }
-
-  //handles status bar
-  for(var i = 0; i < playerMaxHealth; i++) {
-    playerHealthBar[i] = new createjs.Shape();
-    var difference = playerMaxHealth - playerCurrentHealth
-    if(playerCurrentHealth < playerMaxHealth) {
-
-    }
-    playerHealthBar[i].graphics.beginFill("red").drawCircle(910 - 20*i, 30, 5);
-    stage.addChild(playerHealthBar[i]);
-  }
+  generateHealthBar();
 
   walls.push(new Wall(0,0,940,wallThickness, "gray"));
   walls.push(new Wall(0,520,940,wallThickness, "gray"));
@@ -380,30 +356,34 @@ function init() {
     walls[i].show();
   }
 
-  for(var i = 0; i < actors.length; i++) {
-    actors[i].show();
-  }
-
   createjs.Ticker.addEventListener("tick", tick);
 
   function tick() {
+
+    for(var i = 0; i < playerMaxHealth; i++) {
+      var difference = playerMaxHealth - playerCurrentHealth;
+      if(difference !== 0 && difference > i) {
+        playerHealthBar[i].graphics.beginFill("gray").drawCircle(910 - 20*i, 30, 5);
+      }
+      else{
+      playerHealthBar[i].graphics.beginFill("red").drawCircle(910 - 20*i, 30, 5);
+      }
+      stage.addChild(playerHealthBar[i]);
+    }
 
     stage.addChild(player);
 
     for(var i = 0; i < walls.length; i++) {
       walls[i].show();
-    }
-
-    for(var i = 0; i < actors.length; i++) {
-      actors[i].show();
-    }
-
-    for(var i = 0; i < walls.length; i++) {
       walls[i].collide();
     }
 
     for(var i = 0; i < actors.length; i++) {
+      actors[i].show();
       actors[i].collide();
+      if(Object.getPrototypeOf(actors[i]) === Monster.prototype) {
+        actors[i].move();
+      }
     }
 
     //movement
