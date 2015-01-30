@@ -17,7 +17,8 @@ function init() {
 
   var playerSize = 20;
   var playerSpeed = 10;
-  var playerMaxHealth = 3 ;
+  var playerMaxHealth = 3;
+  var playerCurrentHealth = 3;
   var playerHealthBar = [];
 
   var actors = [];
@@ -42,6 +43,7 @@ function init() {
   var generateBlock = function() {
     var seed = Math.random();
     var block = 0;
+
     //exit
     if(seed <= .0001 && !exit) {
       block = 3;
@@ -86,17 +88,19 @@ function init() {
 
   var handleCollision = function() {
     if(Object.getPrototypeOf(this) === Monster.prototype) {
-      //turn one of the health bars grey
-      console.log("MONSTER!!")
+      playerCurrentHealth--
     }
     else if(Object.getPrototypeOf(this) === Exit.prototype) {
-      console.log("should work!")
+      exit = false;
       displayLevel();
     }
   }
 
   var displayLevel = function() {
+    stage.removeAllChildren();
     var currentLevel = generateLevel();
+    actors = null;
+    actors = [];
     player.x = 20;
     player.y = 20;
 
@@ -181,6 +185,12 @@ function init() {
     }
   };
 
+  var show = function() {
+    var visual = new createjs.Shape();
+    visual.graphics.beginFill(this.color).drawRect(this.x, this.y, this.width, this.height);
+    stage.addChild(visual);
+  };
+
   var collide = function() {
     //collide top side
     if(player.x >= this.x &&
@@ -254,11 +264,11 @@ function init() {
         return false;
       }
   };
+
   var player = new createjs.Shape();
   player.graphics.beginFill("blue").drawRect(0, 0, playerSize, playerSize);
   player.x = 20;
   player.y = 20;
-  stage.addChild(player);
 
   var Exit = function(x, y, width, height, color){
     this.x = x;
@@ -269,14 +279,8 @@ function init() {
   }
 
   Exit.prototype.collide = collide;
-
   Exit.prototype.handleCollision = handleCollision;
-
-  Exit.prototype.show = function() {
-    var exit = new createjs.Shape();
-    exit.graphics.beginFill(this.color).drawRect(this.x,this.y, this.height, this.width, this.color);
-    stage.addChild(exit);
-  };
+  Exit.prototype.show = show;
 
   //Bullet class
   var Bullet = function(x, y, radius, points, color){
@@ -293,6 +297,15 @@ function init() {
     stage.addChild(bullet);
   };
 
+  //Player Class
+  var Player = function(x, y, width, height, color) {
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+    this.color = color;
+  };
+
   //Monster Class
   var Monster = function(x, y, width, height, color) {
     this.x = x;
@@ -302,14 +315,8 @@ function init() {
     this.color = color;
   };
 
-  Monster.prototype.show = function() {
-    var monster = new createjs.Shape();
-    monster.graphics.beginFill(this.color).drawRect(this.x, this.y, this.width, this.height);
-    stage.addChild(monster);
-  };
-
+  Monster.prototype.show = show;
   Monster.prototype.collide = collide;
-
   Monster.prototype.handleCollision = handleCollision;
 
   //Wall Class
@@ -321,64 +328,57 @@ function init() {
     this.color = color;
   };
 
-  Wall.prototype.show = function() {
-    var visual = new createjs.Shape();
-    visual.graphics.beginFill(this.color).drawRect(this.x, this.y, this.width, this.height);
-    stage.addChild(visual);
-  };
-
+  Wall.prototype.show = show;
   Wall.prototype.collide = collide;
   Wall.prototype.handleCollision = handleCollision;
 
   //test grid
-  var grid = [];
+  // var grid = [];
+  //
+  // //y lines
+  // grid.push(new Wall(20, 20, 900, 1, "yellow"));
+  // grid.push(new Wall(20, 120, 900, 1, "yellow"));
+  // grid.push(new Wall(20, 220, 900, 1, "yellow"));
+  // grid.push(new Wall(20, 320, 900, 1, "yellow"));
+  // grid.push(new Wall(20, 420, 900, 1, "yellow"));
+  //
+  // //x lines
+  // grid.push(new Wall(20, 20, 1, 500, "yellow"));
+  // grid.push(new Wall(120, 20, 1, 500, "yellow"));
+  // grid.push(new Wall(220, 20, 1, 500, "yellow"));
+  // grid.push(new Wall(320, 20, 1, 500, "yellow"));
+  // grid.push(new Wall(420, 20, 1, 500, "yellow"));
+  // grid.push(new Wall(520, 20, 1, 500, "yellow"));
+  // grid.push(new Wall(620, 20, 1, 500, "yellow"));
+  // grid.push(new Wall(720, 20, 1, 500, "yellow"));
+  // grid.push(new Wall(820, 20, 1, 500, "yellow"));
 
-  //y lines
-  grid.push(new Wall(20, 20, 900, 1, "yellow"));
-  grid.push(new Wall(20, 120, 900, 1, "yellow"));
-  grid.push(new Wall(20, 220, 900, 1, "yellow"));
-  grid.push(new Wall(20, 320, 900, 1, "yellow"));
-  grid.push(new Wall(20, 420, 900, 1, "yellow"));
+  //generate level
+  displayLevel();
 
-  //x lines
-  grid.push(new Wall(20, 20, 1, 500, "yellow"));
-  grid.push(new Wall(120, 20, 1, 500, "yellow"));
-  grid.push(new Wall(220, 20, 1, 500, "yellow"));
-  grid.push(new Wall(320, 20, 1, 500, "yellow"));
-  grid.push(new Wall(420, 20, 1, 500, "yellow"));
-  grid.push(new Wall(520, 20, 1, 500, "yellow"));
-  grid.push(new Wall(620, 20, 1, 500, "yellow"));
-  grid.push(new Wall(720, 20, 1, 500, "yellow"));
-  grid.push(new Wall(820, 20, 1, 500, "yellow"));
-
-  for(var i = 0; i < grid.length; i++) {
-    grid[i].show();
-  }
+  // for(var i = 0; i < grid.length; i++) {
+  //   grid[i].show();
+  // }
 
   //handles status bar
   for(var i = 0; i < playerMaxHealth; i++) {
     playerHealthBar[i] = new createjs.Shape();
+    var difference = playerMaxHealth - playerCurrentHealth
+    if(playerCurrentHealth < playerMaxHealth) {
+
+    }
     playerHealthBar[i].graphics.beginFill("red").drawCircle(910 - 20*i, 30, 5);
     stage.addChild(playerHealthBar[i]);
   }
-
-
-  // var monster = new Monster(200, 400, monsterSize, monsterSize, 'red')
-  // monster.show();
 
   walls.push(new Wall(0,0,940,wallThickness, "gray"));
   walls.push(new Wall(0,520,940,wallThickness, "gray"));
   walls.push(new Wall(920,0,wallThickness,540, "gray"));
   walls.push(new Wall(0,0,wallThickness,540, "gray"));
 
-  //generate level
-  displayLevel();
-
   for(var i = 0; i < walls.length; i++) {
     walls[i].show();
   }
-
-  console.log(actors);
 
   for(var i = 0; i < actors.length; i++) {
     actors[i].show();
@@ -387,6 +387,16 @@ function init() {
   createjs.Ticker.addEventListener("tick", tick);
 
   function tick() {
+
+    stage.addChild(player);
+
+    for(var i = 0; i < walls.length; i++) {
+      walls[i].show();
+    }
+
+    for(var i = 0; i < actors.length; i++) {
+      actors[i].show();
+    }
 
     for(var i = 0; i < walls.length; i++) {
       walls[i].collide();
