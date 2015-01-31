@@ -23,6 +23,9 @@ function init() {
   var playerAlive = true;
 
   var floor = 0;
+  var floorDisplay = new createjs.Text("Level: ", "20px times new roman", "blue");
+  floorDisplay.x = 860;
+  floorDisplay.y = 0;
 
   var actors = [];
 
@@ -383,7 +386,7 @@ function init() {
       stage.addChild(playerHealthBar[i]);
     }
 
-    stage.addChild(player);
+    floorDisplay.text = "Floor: " + floor;
 
     for(var i = 0; i < walls.length; i++) {
       walls[i].show();
@@ -433,6 +436,9 @@ function init() {
     if(lastUpdate === 2) {
       Ticker.setPaused(true)
     }
+
+    stage.addChild(floorDisplay);
+    stage.addChild(player);
 
     if(!playerAlive) {
       stage.addChild(gameOver);
