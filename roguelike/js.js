@@ -10,6 +10,8 @@ function init() {
 
   var blocksInSector = 25;
   var sectorsInLevel = 45;
+  var collisionX;
+  var collisionY;
   var exit = false;
 
   var walls = [];
@@ -208,26 +210,26 @@ function init() {
   };
 
   var show = function() {
-    var visual = new createjs.Shape();
-    visual.graphics.beginFill(this.color).drawRect(this.x, this.y, this.width, this.height);
-    stage.addChild(visual);
+    this.visual.graphics.beginFill(this.color).drawRect(this.x, this.y, this.width, this.height);
+    stage.addChild(this.visual);
   };
 
   var collide = function() {
     //collide top side
     if(player.x >= this.x &&
       player.x <= this.x + this.width &&
-      player.y + playerSize === this.y + playerSpeed) {
-        collision = true;
+      player.y + playerSize === this.y) {
         collideTop = true;
+        collisionY = this.y;
+        console.log("broken")
         this.handleCollision();
       }
 
     else if(player.x + playerSize >= this.x &&
       player.x + playerSize <= this.x + this.width &&
-      player.y + playerSize === this.y + playerSpeed) {
+      player.y + playerSize === this.y) {
         collideTop = true;
-        collision = true;
+        collisionY = this.y;
         this.handleCollision();
       }
 
@@ -289,8 +291,8 @@ function init() {
 
   var player = new createjs.Shape();
   player.graphics.beginFill("blue").drawRect(0, 0, playerSize, playerSize);
-  player.x = 20;
-  player.y = 20;
+  player.x = 50;
+  player.y = 50;
 
   var Exit = function(x, y, width, height, color){
     this.x = x;
@@ -298,6 +300,7 @@ function init() {
     this.width = width;
     this.height = height;
     this.color = color;
+    this.visual = new createjs.Shape();
   }
 
   Exit.prototype.collide = collide;
@@ -311,13 +314,10 @@ function init() {
     this.radius = radius;
     this.points = points;
     this.color = color;
+    this.visual = new createjs.Shape();
   };
 
-  Bullet.prototype.show = function() {
-    var bullet = new createjs.Shape();
-    bullet.graphics.beginFill(this.color).drawPolyStar(this.x,this.y, this.radius, this.points, 5, -90);
-    stage.addChild(bullet);
-  };
+  Bullet.prototype.show = show;
 
   //Player Class
   var Player = function(x, y, width, height, color) {
@@ -326,6 +326,7 @@ function init() {
     this.width = width;
     this.height = height;
     this.color = color;
+    this.visual = new createjs.Shape();
   };
 
   //Monster Class
@@ -335,6 +336,7 @@ function init() {
     this.width = width;
     this.height = height;
     this.color = color;
+    this.visual = new createjs.Shape();
   };
 
   Monster.prototype.show = show;
@@ -352,6 +354,7 @@ function init() {
     this.width = width;
     this.height = height;
     this.color = color;
+    this.visual = new createjs.Shape();
   };
 
   Wall.prototype.show = show;
@@ -399,13 +402,13 @@ function init() {
     }
 
     //movement
-    if (lfHeld && !collision) {
+    if (lfHeld) {
       player.x -= playerSpeed;
-    } else if (rtHeld && !collision) {
+    } else if (rtHeld) {
       player.x += playerSpeed;
-    } else if (fwdHeld && !collision) {
+    } else if (fwdHeld) {
       player.y -= playerSpeed;
-    } else if (backHeld && !collision) {
+    } else if (backHeld) {
       player.y += playerSpeed;
     }
 
@@ -423,9 +426,8 @@ function init() {
       collision = false;
     }
     else if (collideTop) {
-      player.y -= playerSpeed;
+      player.y = collisionY - playerSize;
       collideTop = false;
-      collision = false;
     }
     else if (collideBot) {
       player.y += playerSpeed;
