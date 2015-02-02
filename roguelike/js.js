@@ -29,6 +29,8 @@ function init() {
   floorDisplay.x = 860;
   floorDisplay.y = 0;
 
+  var bullets = [];
+
   var actors = [];
 
   var monsterSize = 20;
@@ -318,6 +320,10 @@ function init() {
   };
 
   Bullet.prototype.show = show;
+
+  for(var i = 0; i <= 30; i++) {
+    bullets[i] = new Bullet(0, 0, 10, 5, "yellow")
+  };
 
   //Player Class
   var Player = function(x, y, width, height, color) {
