@@ -222,8 +222,6 @@ function init() {
       player.x <= this.x + this.width &&
       player.y + playerSize === this.y) {
         collideTop = true;
-        collisionY = this.y;
-        console.log("broken")
         this.handleCollision();
       }
 
@@ -231,24 +229,21 @@ function init() {
       player.x + playerSize <= this.x + this.width &&
       player.y + playerSize === this.y) {
         collideTop = true;
-        collisionY = this.y;
         this.handleCollision();
       }
 
     //collide bottom side
     else if(player.x >= this.x &&
       player.x <= this.x + this.width &&
-      player.y === this.y + this.height - playerSpeed){
+      player.y === this.y + this.height){
         collideBot = true;
-        collision = true;
         this.handleCollision();
       }
 
     else if(player.x + playerSize >= this.x &&
       player.x + playerSize <= this.x + this.width &&
-      player.y === this.y + this.height - playerSpeed){
+      player.y === this.y + this.height){
         collideBot = true;
-        collision = true;
         this.handleCollision();
       }
 
@@ -424,21 +419,18 @@ function init() {
     if (collideLeft) {
       player.x += playerSpeed;
       collideLeft = false;
-      collision = false;
     }
     else if (collideRight) {
       player.x -= playerSpeed;
       collideRight = false;
-      collision = false;
     }
     else if (collideTop) {
-      player.y = collisionY - playerSize;
+      player.y -= playerSize;
       collideTop = false;
     }
     else if (collideBot) {
       player.y += playerSpeed;
       collideBot = false;
-      collision = false;
     }
 
     if(lastUpdate === 2) {

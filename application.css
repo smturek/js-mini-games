@@ -26,12 +26,10 @@
   display: inline;
 }
 
-canvas {
-  position: absolute;
-  top: 150px;
-  left: 350px;
-  background: transparent;
-  border: 1px solid black;
+#foo {
+  height: 540px;
+  width: 940px;
+  margin: 0 auto;
 }
 
 #demoCanvas {
@@ -75,12 +73,27 @@ canvas {
 
 #background {
   z-index: -2;
+  position: absolute;
+  top: 150px;
+  left: 350px;
+  background: transparent;
+  border: 1px solid black;
 }
 #main {
   z-index: -1;
+  position: absolute;
+  top: 150px;
+  left: 350px;
+  background: transparent;
+  border: 1px solid black;
 }
 #ship {
   z-index: 0;
+  position: absolute;
+  top: 150px;
+  left: 350px;
+  background: transparent;
+  border: 1px solid black;
 }
 .score {
   position: absolute;
