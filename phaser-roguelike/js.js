@@ -37,6 +37,7 @@ function create() {
   actors.enableBody = true;
 
   player = game.add.sprite(20, 20, 'player');
+  game.physics.arcade.enable(player);
   player.enableBody = true;
 
   //collisions
@@ -45,6 +46,8 @@ function create() {
 }
 
 function update() {
+
+  game.physics.arcade.collide(player, walls);
 
   if (keys.left.isDown)
     {
