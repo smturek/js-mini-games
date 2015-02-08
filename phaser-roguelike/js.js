@@ -39,6 +39,8 @@ function create() {
   player = game.add.sprite(20, 20, 'player');
   player.enableBody = true;
 
+  //collisions
+
 
 }
 
