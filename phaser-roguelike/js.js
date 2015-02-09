@@ -4,12 +4,15 @@ var game = new Phaser.Game(940, 540, Phaser.AUTO, 'foo',
 var walls;
 var actors;
 var player;
-var monster
+var monster;
 
-var fireUp
-var fireDown
-var fireRight
-var fireLeft
+var bullets;
+var bulletTimer = 0;
+
+var moveUp;
+var moveDown;
+var moveRight;
+var moveLeft;
 
 function preload() {
 
@@ -17,12 +20,17 @@ function preload() {
   game.load.image('tall', 'assets/tall.png');
   game.load.image('player', 'assets/player.png');
   game.load.image('monster', 'assets/monster.png');
+  game.load.image('bullet', 'assets/bullet.png');
 
 }
 
 function create() {
   game.physics.startSystem(Phaser.Physics.ARCADE);
-  fireButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+
+  moveUp = game.input.keyboard.addKey(87);
+  moveDown = game.input.keyboard.addKey(83);
+  moveLeft = game.input.keyboard.addKey(65);
+  moveRight = game.input.keyboard.addKey(68);
 
   walls = game.add.group();
   walls.enableBody = true;
@@ -39,6 +47,16 @@ function create() {
   wall = walls.create(920, 0, 'tall');
   wall.body.immovable = true;
 
+  //  Our bullet group
+  bullets = game.add.group();
+  bullets.enableBody = true;
+  bullets.physicsBodyType = Phaser.Physics.ARCADE;
+  bullets.createMultiple(30, 'bullet');
+  // bullets.setAll('anchor.x', 0.5);
+  // bullets.setAll('anchor.y', 1);
+  bullets.setAll('outOfBoundsKill', true);
+  bullets.setAll('checkWorldBounds', true);
+
   actors = game.add.group()
   actors.enableBody = true;
 
@@ -53,7 +71,10 @@ function create() {
 
 function update() {
   game.physics.arcade.collide(player, walls);
-  game.physics.arcade.collide(player, actors)
+  game.physics.arcade.collide(player, actors);
+  game.physics.arcade.collide(actors, walls);
+  game.physics.arcade.collide(bullets, walls);
+  game.physics.arcade.collide(actors, bullets);
 
   keys = game.input.keyboard.createCursorKeys();
 
@@ -62,34 +83,34 @@ function update() {
   monster.body.velocity.y = 0;
   monster.body.velocity.x = 0;
 
-  if (game.input.keyboard.isDown(87)) {
+  if (moveUp.isDown) {
     player.body.velocity.y -= 250;
   }
-  else if (game.input.keyboard.isDown(83)) {
+  else if (moveDown.isDown) {
     player.body.velocity.y += 250;
   }
-  else if (game.input.keyboard.isDown(68)) {
+  else if (moveRight.isDown) {
     player.body.velocity.x += 250;
   }
-  else if (game.input.keyboard.isDown(65)) {
+  else if (moveLeft.isDown) {
     player.body.velocity.x -= 250;
   }
 
   if (keys.left.isDown)
     {
-      player.body.velocity.x -= 250;
+      fireBullet("left");
     }
   else if (keys.right.isDown)
     {
-      player.body.velocity.x += 250;
+      fireBullet("right");
     }
   else if (keys.up.isDown)
     {
-      player.body.velocity.y -= 250;
+      fireBullet("up");
     }
   else if (keys.down.isDown)
     {
-      player.body.velocity.y += 250;
+      fireBullet("down");
     }
 
   //radomizes monster movement
@@ -112,4 +133,29 @@ function update() {
       monster.body.velocity.y += 250;
     }
 
+}
+
+function fireBullet (direction) {
+  if (game.time.now > bulletTimer) {
+    console.log(direction);
+    bullet = bullets.getFirstExists(false);
+    if (bullet)
+    {
+        bullet.reset(player.x + 8, player.y + 8);
+        if(direction === "up") {
+          bullet.body.velocity.y = -400;
+        }
+        else if(direction === "down") {
+          bullet.body.velocity.y = 400;
+        }
+        else if(direction === "right") {
+          bullet.body.velocity.x = 400;
+        }
+        else if(direction === "left") {
+          bullet.body.velocity.x = -400;
+        }
+
+        bulletTime = game.time.now + 500;
+    }
+  }
 }
