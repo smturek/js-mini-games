@@ -2,12 +2,13 @@ var game = new Phaser.Game(940, 540, Phaser.AUTO, 'foo',
   { preload: preload, create: create, update: update });
 
 var walls;
-var actors;
+var exit;
+var noExit = true;
 var player;
+
+var monsters;
 var monster;
-var monster1;
-var monster2;
-var monster3;
+var livingMonsters;
 
 var bullets;
 var bulletTimer = 0;
@@ -24,6 +25,7 @@ function preload() {
 
   game.load.image('wide', 'assets/wide.png');
   game.load.image('tall', 'assets/tall.png');
+  game.load.image('exit', 'assets/exit.png');
   game.load.image('player', 'assets/player.png');
   game.load.image('monster', 'assets/monster.png');
   game.load.image('bullet', 'assets/bullet.png');
@@ -67,14 +69,23 @@ function create() {
   enemyBullets = game.add.group();
   enemyBullets.enableBody = true;
   enemyBullets.physicsBodyType = Phaser.Physics.ARCADE;
-  enemyBullets.createMultiple(30, 'enemyBullet');
+  enemyBullets.createMultiple(60, 'enemyBullet');
   enemyBullets.setAll('outOfBoundsKill', true);
   enemyBullets.setAll('checkWorldBounds', true);
 
-  actors = game.add.group()
-  actors.enableBody = true;
+  monsters = game.add.group()
+  monsters.enableBody = true;
 
-  monster = actors.create(300, 300, 'monster');
+  monster = monsters.create(300, 300, 'monster');
+  monster.body.immovable = true;
+
+  monster = monsters.create(700, 400, 'monster');
+  monster.body.immovable = true;
+
+  monster = monsters.create(500, 100, 'monster');
+  monster.body.immovable = true;
+
+  monster = monsters.create(200, 450, 'monster');
   monster.body.immovable = true;
 
   player = game.add.sprite(20, 20, 'player');
@@ -85,11 +96,12 @@ function create() {
 
 function update() {
   game.physics.arcade.collide(player, walls);
-  game.physics.arcade.collide(player, actors);
-  game.physics.arcade.collide(actors, walls);
+  game.physics.arcade.collide(player, monsters);
+  game.physics.arcade.collide(monsters, walls);
   game.physics.arcade.overlap(bullets, walls, hitsWall);
   game.physics.arcade.overlap(enemyBullets, walls, hitsWall);
-  game.physics.arcade.overlap(actors, bullets, handleCollisions);
+  game.physics.arcade.overlap(monsters, bullets, handleCollisions);
+  game.physics.arcade.overlap(exit, player, renderLevel)
 
   keys = game.input.keyboard.createCursorKeys();
 
@@ -128,9 +140,38 @@ function update() {
 
   if (game.time.now > enemyTimer)
       {
-          enemyFires();
+        enemyFires();
+        enemyTimer = game.time.now + 200;
       }
+  if (monsters.getFirstAlive() === null && noExit)
+    {
+      showExit();
+    }
 
+}
+
+function renderLevel() {
+  exit.kill();
+  noExit = true;
+  var randMonsters = Math.floor(Math.random() * (10 - 4) + 4);
+  var x;
+  var y;
+
+  for(var i = 0; i < randMonsters; i++) {
+    x = Math.floor(Math.random() * (890 - 20) + 20);
+    y = Math.floor(Math.random() * (490 - 20) + 20);
+
+    monster = monsters.create(x, y, 'monster');
+    monster.body.immovable = true;
+  }
+}
+
+function showExit() {
+  var x = Math.floor(Math.random() * (890 - 20) + 20);
+  var y = Math.floor(Math.random() * (490 - 20) + 20);
+  exit = game.add.sprite(x, y, 'exit');
+  game.physics.arcade.enable(exit);
+  noExit = false;
 }
 
 function fireBullet(direction) {
@@ -167,13 +208,18 @@ function hitsWall(bullet) {
 }
 
 function enemyFires() {
-  //  Grab the first bullet we can from the pool
-  if(monster.alive) {
-    enemyBullet = enemyBullets.getFirstExists(false);
-    // And fire the bullet from this enemy
-    enemyBullet.reset(monster.body.x, monster.body.y);
+  livingMonsters = [];
+  monsters.forEachAlive(function(monster) {
+    livingMonsters.push(monster)
+  });
 
-    game.physics.arcade.moveToObject(enemyBullet,player,120);
-    enemyTimer = game.time.now + 200;
+  if(livingMonsters.length > 0) {
+    for(var i = 0; i < livingMonsters.length; i++) {
+      enemyBullet = enemyBullets.getFirstExists(false)
+      if(enemyBullet) {
+        enemyBullet.reset(livingMonsters[i].body.x, livingMonsters[i].body.y);
+        game.physics.arcade.moveToObject(enemyBullet,player,200);
+      }
+    }
   }
 }
