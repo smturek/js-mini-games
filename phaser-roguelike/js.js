@@ -73,8 +73,8 @@ function update() {
   game.physics.arcade.collide(player, walls);
   game.physics.arcade.collide(player, actors);
   game.physics.arcade.collide(actors, walls);
-  game.physics.arcade.collide(bullets, walls);
-  game.physics.arcade.collide(actors, bullets);
+  game.physics.arcade.overlap(bullets, walls, handleCollisions);
+  game.physics.arcade.overlap(actors, bullets, handleCollisions);
 
   keys = game.input.keyboard.createCursorKeys();
 
@@ -135,9 +135,8 @@ function update() {
 
 }
 
-function fireBullet (direction) {
+function fireBullet(direction) {
   if (game.time.now > bulletTimer) {
-    console.log(direction);
     bullet = bullets.getFirstExists(false);
     if (bullet)
     {
@@ -155,7 +154,11 @@ function fireBullet (direction) {
           bullet.body.velocity.x = -400;
         }
 
-        bulletTime = game.time.now + 500;
+        bulletTimer = game.time.now + 300;
     }
   }
+}
+
+function handleCollisions(bullet) {
+  bullet.kill();
 }
