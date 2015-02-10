@@ -3,7 +3,12 @@ var game = new Phaser.Game(940, 540, Phaser.AUTO, 'foo',
 
 var walls;
 var exit;
-var noExit = true;
+var noExit = false;
+
+var level = 0
+var levelString = "";
+var levelText;
+
 var player;
 
 var monsters;
@@ -76,21 +81,26 @@ function create() {
   monsters = game.add.group()
   monsters.enableBody = true;
 
-  monster = monsters.create(300, 300, 'monster');
-  monster.body.immovable = true;
-
-  monster = monsters.create(700, 400, 'monster');
-  monster.body.immovable = true;
-
-  monster = monsters.create(500, 100, 'monster');
-  monster.body.immovable = true;
-
-  monster = monsters.create(200, 450, 'monster');
-  monster.body.immovable = true;
+  // monster = monsters.create(300, 300, 'monster');
+  // monster.body.immovable = true;
+  //
+  // monster = monsters.create(700, 400, 'monster');
+  // monster.body.immovable = true;
+  //
+  // monster = monsters.create(500, 100, 'monster');
+  // monster.body.immovable = true;
+  //
+  // monster = monsters.create(200, 450, 'monster');
+  // monster.body.immovable = true;
 
   player = game.add.sprite(20, 20, 'player');
   game.physics.arcade.enable(player);
   player.body.collideWorldBounds= true;
+
+  levelString = 'Level: ';
+  levelText = game.add.text(845, 1, levelString + level, { font: '16px courier', fill: '#fff' });
+
+  showExit();
 
 }
 
@@ -143,6 +153,7 @@ function update() {
         enemyFires();
         enemyTimer = game.time.now + 200;
       }
+
   if (monsters.getFirstAlive() === null && noExit)
     {
       showExit();
@@ -164,6 +175,8 @@ function renderLevel() {
     monster = monsters.create(x, y, 'monster');
     monster.body.immovable = true;
   }
+  level++;
+  levelText.text = levelString + level;
 }
 
 function showExit() {
