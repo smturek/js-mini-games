@@ -8,8 +8,12 @@ var noExit = false;
 var level = 0
 var levelString = "";
 var levelText;
+var gameOver;
 
 var player;
+var playerMaxLife = 3;
+var lives;
+var life;
 
 var monsters;
 var monster;
@@ -35,6 +39,7 @@ function preload() {
   game.load.image('monster', 'assets/monster.png');
   game.load.image('bullet', 'assets/bullet.png');
   game.load.image('enemyBullet', 'assets/ebullet.png');
+  game.load.image('life', 'assets/life.png');
 
 }
 
@@ -74,31 +79,29 @@ function create() {
   enemyBullets = game.add.group();
   enemyBullets.enableBody = true;
   enemyBullets.physicsBodyType = Phaser.Physics.ARCADE;
-  enemyBullets.createMultiple(60, 'enemyBullet');
+  enemyBullets.createMultiple(100, 'enemyBullet');
   enemyBullets.setAll('outOfBoundsKill', true);
   enemyBullets.setAll('checkWorldBounds', true);
 
   monsters = game.add.group()
   monsters.enableBody = true;
 
-  // monster = monsters.create(300, 300, 'monster');
-  // monster.body.immovable = true;
-  //
-  // monster = monsters.create(700, 400, 'monster');
-  // monster.body.immovable = true;
-  //
-  // monster = monsters.create(500, 100, 'monster');
-  // monster.body.immovable = true;
-  //
-  // monster = monsters.create(200, 450, 'monster');
-  // monster.body.immovable = true;
+  lives = game.add.group();
+  for(var i = 0; i < playerMaxLife; i++) {
+    life = lives.create(904 - 25 * i, 2, 'life')
+  }
+
+  gameOver = game.add.text(game.world.centerX,game.world.centerY,' ', { font: '84px Arial', fill: '#fff' });
+  gameOver.anchor.setTo(0.5, 0.5);
+  gameOver.visible = false;
+
 
   player = game.add.sprite(20, 20, 'player');
   game.physics.arcade.enable(player);
   player.body.collideWorldBounds= true;
 
   levelString = 'Level: ';
-  levelText = game.add.text(845, 1, levelString + level, { font: '16px courier', fill: '#fff' });
+  levelText = game.add.text(20, 1, levelString + level, { font: '16px arial', fill: '#fff' });
 
   showExit();
 
@@ -111,53 +114,54 @@ function update() {
   game.physics.arcade.overlap(bullets, walls, hitsWall);
   game.physics.arcade.overlap(enemyBullets, walls, hitsWall);
   game.physics.arcade.overlap(monsters, bullets, handleCollisions);
-  game.physics.arcade.overlap(exit, player, renderLevel)
+  game.physics.arcade.overlap(enemyBullets, player, playerHit, null, this);
+  game.physics.arcade.overlap(exit, player, renderLevel);
 
   keys = game.input.keyboard.createCursorKeys();
 
   player.body.velocity.y = 0;
   player.body.velocity.x = 0;
-
-  if (moveUp.isDown) {
-    player.body.velocity.y -= 250;
-  }
-  else if (moveDown.isDown) {
-    player.body.velocity.y += 250;
-  }
-  else if (moveRight.isDown) {
-    player.body.velocity.x += 250;
-  }
-  else if (moveLeft.isDown) {
-    player.body.velocity.x -= 250;
-  }
-
-  if (keys.left.isDown)
-    {
-      fireBullet("left");
+  if(player.alive) {
+    if (moveUp.isDown) {
+      player.body.velocity.y -= 250;
     }
-  else if (keys.right.isDown)
-    {
-      fireBullet("right");
+    else if (moveDown.isDown) {
+      player.body.velocity.y += 250;
     }
-  else if (keys.up.isDown)
-    {
-      fireBullet("up");
+    else if (moveRight.isDown) {
+      player.body.velocity.x += 250;
     }
-  else if (keys.down.isDown)
-    {
-      fireBullet("down");
+    else if (moveLeft.isDown) {
+      player.body.velocity.x -= 250;
     }
 
-  if (game.time.now > enemyTimer)
+    if (keys.left.isDown)
       {
-        enemyFires();
-        enemyTimer = game.time.now + 200;
+        fireBullet("left");
+      }
+    else if (keys.right.isDown)
+      {
+        fireBullet("right");
+      }
+    else if (keys.up.isDown)
+      {
+        fireBullet("up");
+      }
+    else if (keys.down.isDown)
+      {
+        fireBullet("down");
       }
 
-  if (monsters.getFirstAlive() === null && noExit)
-    {
-      showExit();
-    }
+    if (monsters.getFirstAlive() === null && noExit)
+      {
+        showExit();
+      }
+  }
+
+  if (game.time.now > enemyTimer) {
+      enemyFires();
+      enemyTimer = game.time.now + 200;
+  }
 
 }
 
@@ -214,6 +218,21 @@ function fireBullet(direction) {
 function handleCollisions(bullet, monster) {
   bullet.kill();
   monster.kill();
+}
+
+function playerHit(player, bullet) {
+  bullet.kill();
+
+  life = lives.getFirstAlive();
+
+  if(life) {
+    life.kill();
+  }
+  else {
+    player.kill();
+    gameOver.text = "YOU HAVE DIED";
+    gameOver.visible = true;
+  }
 }
 
 function hitsWall(bullet) {
