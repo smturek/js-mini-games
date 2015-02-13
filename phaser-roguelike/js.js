@@ -186,6 +186,9 @@ function update() {
 
 function renderLevel() {
   exit.kill();
+  drops.callAll("kill");
+  bullets.callAll("kill");
+  enemyBullets.callAll("kill");
   noExit = true;
 
   //if player has all powerups don't drop anymore
