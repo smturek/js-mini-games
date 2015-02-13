@@ -4,7 +4,7 @@ var game = new Phaser.Game(940, 540, Phaser.AUTO, 'foo',
 var walls;
 var exit;
 var noExit = false;
-var noPowerUp;
+var PowerUp;
 
 var level = 0
 var levelString = "";
@@ -182,12 +182,20 @@ function update() {
       enemyTimer = game.time.now + 1000;
   }
 
-}
+} // end update function
 
 function renderLevel() {
   exit.kill();
   noExit = true;
-  noPowerUp = true;
+
+  //if player has all powerups don't drop anymore
+  if(doubleShot && doubleSpeed) {
+    PowerUp = false;
+  }
+  else {
+    PowerUp = true;
+  }
+
   enemyTimer = game.time.now + 500;
   var randMonsters = Math.floor(Math.random() * (10 - 4) + 4);
   var x;
@@ -217,7 +225,13 @@ function fireBullet(direction) {
     bullet = bullets.getFirstExists(false);
     if (bullet)
     {
-        bullet.reset(player.x + 8, player.y + 8);
+        if(doubleShot) {
+          bullet.reset(player.x, player.y);
+        }
+        else {
+          bullet.reset(player.x + 8, player.y + 8);
+        }
+
         if(direction === "up") {
           bullet.body.velocity.y = -400;
         }
@@ -229,6 +243,26 @@ function fireBullet(direction) {
         }
         else if(direction === "left") {
           bullet.body.velocity.x = -400;
+        }
+
+        if(doubleShot) {
+          bullet = bullets.getFirstExists(false);
+          if (bullet)
+          {
+            bullet.reset(player.x + 16, player.y + 16);
+            if(direction === "up") {
+              bullet.body.velocity.y = -400;
+            }
+            else if(direction === "down") {
+              bullet.body.velocity.y = 400;
+            }
+            else if(direction === "right") {
+              bullet.body.velocity.x = 400;
+            }
+            else if(direction === "left") {
+              bullet.body.velocity.x = -400;
+            }
+          }
         }
 
         bulletTimer = game.time.now + playerFiringRate;
@@ -268,14 +302,14 @@ function handleCollisions(monster, bullet) {
   monster.kill();
   killCount++;
   var rand = game.rnd.integerInRange(0, 10);
-  if(rand < 1) {
+  if(rand < 1 && !PowerUp) {
     drop = drops.create(monster.x, monster.y, "powerUp")
     drop.body.immovable = true;
+    PowerUp = false;
   }
-  else if(rand < 3 && noPowerUp) {
+  else if(rand < 3) {
     drop = drops.create(monster.x, monster.y, "lifeUp")
     drop.body.immovable = true;
-    noPowerUp = false;
   }
 }
 
