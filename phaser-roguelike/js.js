@@ -239,9 +239,13 @@ function pickUp(player, drop) {
   if(drop.key === "lifeUp") {
     // makes sure to add the life at the end of the missing lives so that diplay is consistent
     var missingLife = lives.getFirstDead();
-    var missingLifeIndex = lives.getChildIndex(missingLife);
     if(missingLife) {
-      console.log(missingLifeIndex);
+      //probably better as a for loop if I start adding more lives
+      var missingLifeIndex = lives.getChildIndex(missingLife);
+      if(lives.getChildAt(missingLifeIndex + 1).alive === false) {
+        missingLife = lives.getChildAt(missingLifeIndex + 1);
+      }
+      missingLife.reset(missingLife.x, missingLife.y);
     }
   }
   else if(drop.key === "powerUp" && noPowerUp === true) {
