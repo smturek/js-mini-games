@@ -25,6 +25,7 @@ var doubleShot = false;
 
 var monsters;
 var monster;
+var monsterFireRate = 1000;
 var killCount = 0;
 var livingMonsters;
 
@@ -113,9 +114,10 @@ function create() {
   kills.anchor.setTo(0.5, 0.5);
   kills.visible = false;
 
-  player = game.add.sprite(20, 20, 'player');
+  player = game.add.sprite(game.world.centerX,game.world.centerY, 'player');
   game.physics.arcade.enable(player);
   player.body.collideWorldBounds= true;
+  player.anchor.setTo(0.5, 0.5);
 
   levelString = 'Level: ';
   levelText = game.add.text(20, 1, levelString + level, { font: '16px arial', fill: '#fff' });
@@ -179,17 +181,24 @@ function update() {
 
   if (game.time.now > enemyTimer) {
       enemyFires();
-      enemyTimer = game.time.now + 1000;
+      enemyTimer = game.time.now + monsterFireRate;
   }
 
 } // end update function
 
 function renderLevel() {
+  level++;
+  //get rid of everything from the previous level
   exit.kill();
   drops.callAll("kill");
   bullets.callAll("kill");
   enemyBullets.callAll("kill");
   noExit = true;
+
+  //monster fire rate
+  if(level < 21) {
+    monsterFireRate = monsterFireRate - 50;
+  }
 
   //if player has all powerups don't drop anymore
   if(doubleShot && doubleSpeed) {
@@ -198,26 +207,26 @@ function renderLevel() {
   else {
     PowerUp = true;
   }
-
+  //set up monsters
   enemyTimer = game.time.now + 500;
-  var randMonsters = Math.floor(Math.random() * (10 - 4) + 4);
+  var randMonsters = game.rnd.integerInRange(4, 10);
   var x;
   var y;
 
   for(var i = 0; i < randMonsters; i++) {
-    x = Math.floor(Math.random() * (890 - 20) + 20);
-    y = Math.floor(Math.random() * (490 - 20) + 20);
+    x = game.rnd.integerInRange(40, 870);
+    y = game.rnd.integerInRange(40, 470);
 
     monster = monsters.create(x, y, 'monster');
     monster.body.immovable = true;
+    monster.anchor.setTo(0.5, 0.5);
   }
-  level++;
   levelText.text = levelString + level;
 }
 
 function showExit() {
-  var x = Math.floor(Math.random() * (890 - 20) + 20);
-  var y = Math.floor(Math.random() * (490 - 20) + 20);
+  var x = game.rnd.integerInRange(40, 870);
+  var y = game.rnd.integerInRange(40, 470);
   exit = game.add.sprite(x, y, 'exit');
   game.physics.arcade.enable(exit);
   noExit = false;
@@ -226,13 +235,14 @@ function showExit() {
 function fireBullet(direction) {
   if (game.time.now > bulletTimer) {
     bullet = bullets.getFirstExists(false);
+    bullet.anchor.setTo(0.5, 0.5);
     if (bullet)
     {
         if(doubleShot) {
-          bullet.reset(player.x, player.y);
+          bullet.reset(player.x - 6, player.y - 6);
         }
         else {
-          bullet.reset(player.x + 8, player.y + 8);
+          bullet.reset(player.x, player.y);
         }
 
         if(direction === "up") {
@@ -252,7 +262,7 @@ function fireBullet(direction) {
           bullet = bullets.getFirstExists(false);
           if (bullet)
           {
-            bullet.reset(player.x + 16, player.y + 16);
+            bullet.reset(player.x + 6, player.y + 6);
             if(direction === "up") {
               bullet.body.velocity.y = -400;
             }
@@ -305,7 +315,7 @@ function handleCollisions(monster, bullet) {
   monster.kill();
   killCount++;
   var rand = game.rnd.integerInRange(0, 10);
-  if(rand < 1 && !PowerUp) {
+  if(rand < 1 && PowerUp) {
     drop = drops.create(monster.x, monster.y, "powerUp")
     drop.body.immovable = true;
     PowerUp = false;
@@ -348,7 +358,8 @@ function enemyFires() {
     for(var i = 0; i < livingMonsters.length; i++) {
       enemyBullet = enemyBullets.getFirstExists(false)
       if(enemyBullet) {
-        enemyBullet.reset(livingMonsters[i].body.x, livingMonsters[i].body.y);
+        enemyBullet.anchor.setTo(0.5, 0.5);
+        enemyBullet.reset(livingMonsters[i].x, livingMonsters[i].y);
         game.physics.arcade.moveToObject(enemyBullet,player,200);
       }
     }
