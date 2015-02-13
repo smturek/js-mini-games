@@ -4,6 +4,7 @@ var game = new Phaser.Game(940, 540, Phaser.AUTO, 'foo',
 var walls;
 var exit;
 var noExit = false;
+var noPowerUp;
 
 var level = 0
 var levelString = "";
@@ -15,6 +16,10 @@ var player;
 var playerMaxLife = 3;
 var lives;
 var life;
+var drops;
+var drop;
+var lifeUp;
+var powerUp;
 
 var monsters;
 var monster;
@@ -42,6 +47,8 @@ function preload() {
   game.load.image('bullet', 'assets/bullet.png');
   game.load.image('enemyBullet', 'assets/ebullet.png');
   game.load.image('life', 'assets/life.png');
+  game.load.image('powerUp', 'assets/powerup.png')
+  game.load.image('lifeUp', 'assets/lifeup.png')
 
 }
 
@@ -90,8 +97,11 @@ function create() {
 
   lives = game.add.group();
   for(var i = 0; i < playerMaxLife; i++) {
-    life = lives.create(904 - 25 * i, 2, 'life')
+    life = lives.create(854 + 25 * i, 2, 'life')
   }
+
+  drops = game.add.group();
+  drops.enableBody = true;
 
   gameOver = game.add.text(game.world.centerX,game.world.centerY,' ', { font: '84px Arial', fill: '#fff' });
   gameOver.anchor.setTo(0.5, 0.5);
@@ -121,11 +131,13 @@ function update() {
   game.physics.arcade.overlap(monsters, bullets, handleCollisions);
   game.physics.arcade.overlap(enemyBullets, player, playerHit, null, this);
   game.physics.arcade.overlap(exit, player, renderLevel);
+  game.physics.arcade.overlap(drops, player, pickUp);
 
   keys = game.input.keyboard.createCursorKeys();
 
   player.body.velocity.y = 0;
   player.body.velocity.x = 0;
+
   if(player.alive) {
     if (moveUp.isDown) {
       player.body.velocity.y -= 250;
@@ -165,7 +177,7 @@ function update() {
 
   if (game.time.now > enemyTimer) {
       enemyFires();
-      enemyTimer = game.time.now + 200;
+      enemyTimer = game.time.now + 1000;
   }
 
 }
@@ -173,6 +185,7 @@ function update() {
 function renderLevel() {
   exit.kill();
   noExit = true;
+  noPowerUp = true;
   enemyTimer = game.time.now + 500;
   var randMonsters = Math.floor(Math.random() * (10 - 4) + 4);
   var x;
@@ -221,10 +234,36 @@ function fireBullet(direction) {
   }
 }
 
-function handleCollisions(bullet, monster) {
+function pickUp(player, drop) {
+  drop.kill();
+  if(drop.key === "lifeUp") {
+    // makes sure to add the life at the end of the missing lives so that diplay is consistent
+    var missingLife = lives.getFirstDead();
+    var missingLifeIndex = lives.getChildIndex(missingLife);
+    if(missingLife) {
+      console.log(missingLifeIndex);
+    }
+  }
+  else if(drop.key === "powerUp" && noPowerUp === true) {
+    console.log("POWER!!!!!!!")
+    noPowerUp = false;
+  }
+
+}
+
+function handleCollisions(monster, bullet) {
   bullet.kill();
   monster.kill();
   killCount++;
+  var rand = game.rnd.integerInRange(0, 10);
+  if(rand < 1) {
+    drop = drops.create(monster.x, monster.y, "powerUp")
+    drop.body.immovable = true;
+  }
+  else if(rand < 4) {
+    drop = drops.create(monster.x, monster.y, "lifeUp")
+    drop.body.immovable = true;
+  }
 }
 
 function playerHit(player, bullet) {
