@@ -9,6 +9,7 @@ var level = 0
 var levelString = "";
 var levelText;
 var gameOver;
+var kills
 
 var player;
 var playerMaxLife = 3;
@@ -17,6 +18,7 @@ var life;
 
 var monsters;
 var monster;
+var killCount = 0;
 var livingMonsters;
 
 var bullets;
@@ -95,6 +97,9 @@ function create() {
   gameOver.anchor.setTo(0.5, 0.5);
   gameOver.visible = false;
 
+  kills= game.add.text(game.world.centerX, game.world.centerY + 70, ' ', {font: '26px Arial', fill: '#fff'});
+  kills.anchor.setTo(0.5, 0.5);
+  kills.visible = false;
 
   player = game.add.sprite(20, 20, 'player');
   game.physics.arcade.enable(player);
@@ -168,6 +173,7 @@ function update() {
 function renderLevel() {
   exit.kill();
   noExit = true;
+  enemyTimer = game.time.now + 500;
   var randMonsters = Math.floor(Math.random() * (10 - 4) + 4);
   var x;
   var y;
@@ -218,6 +224,7 @@ function fireBullet(direction) {
 function handleCollisions(bullet, monster) {
   bullet.kill();
   monster.kill();
+  killCount++;
 }
 
 function playerHit(player, bullet) {
@@ -228,9 +235,12 @@ function playerHit(player, bullet) {
   if(life) {
     life.kill();
   }
-  else {
+
+  if (lives.countLiving() < 1) {
     player.kill();
     gameOver.text = "YOU HAVE DIED";
+    kills.text = "YOU HAVE SLAIN " + killCount + " MONSTERS!" ;
+    kills.visible = true;
     gameOver.visible = true;
   }
 }
