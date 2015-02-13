@@ -14,12 +14,14 @@ var kills
 
 var player;
 var playerMaxLife = 3;
+var playerFiringRate = 300;
 var lives;
 var life;
+
 var drops;
 var drop;
-var lifeUp;
-var powerUp;
+var doubleSpeed = false;
+var doubleShot = false;
 
 var monsters;
 var monster;
@@ -229,7 +231,7 @@ function fireBullet(direction) {
           bullet.body.velocity.x = -400;
         }
 
-        bulletTimer = game.time.now + 300;
+        bulletTimer = game.time.now + playerFiringRate;
     }
   }
 }
@@ -248,9 +250,15 @@ function pickUp(player, drop) {
       missingLife.reset(missingLife.x, missingLife.y);
     }
   }
-  else if(drop.key === "powerUp" && noPowerUp === true) {
-    console.log("POWER!!!!!!!")
-    noPowerUp = false;
+  else if(drop.key === "powerUp") {
+    var rand = game.rnd.integerInRange(0, 1);
+    if(rand === 0 && !doubleSpeed) {
+      playerFiringRate = 150;
+      doubleSpeed = true;
+    }
+    else if(rand === 1 && !doubleShot) {
+      doubleShot = true;
+    }
   }
 
 }
@@ -264,9 +272,10 @@ function handleCollisions(monster, bullet) {
     drop = drops.create(monster.x, monster.y, "powerUp")
     drop.body.immovable = true;
   }
-  else if(rand < 4) {
+  else if(rand < 3 && noPowerUp) {
     drop = drops.create(monster.x, monster.y, "lifeUp")
     drop.body.immovable = true;
+    noPowerUp = false;
   }
 }
 
