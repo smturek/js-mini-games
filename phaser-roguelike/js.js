@@ -9,6 +9,7 @@ var PowerUp;
 var level = 0
 var levelString = "";
 var levelText;
+var announcement;
 var gameOver;
 var kills
 
@@ -25,7 +26,7 @@ var doubleShot = false;
 
 var monsters;
 var monster;
-var monsterFireRate = 1000;
+var monsterFireRate = 1200;
 var killCount = 0;
 var livingMonsters;
 
@@ -114,6 +115,10 @@ function create() {
   kills.anchor.setTo(0.5, 0.5);
   kills.visible = false;
 
+  announcement = game.add.text(game.world.centerX, 50, ' ', {font: '26px Arial', fill: '#fff'});
+  announcement.anchor.setTo(0.5, 0.5);
+  announcement.alpha = 0;
+
   player = game.add.sprite(game.world.centerX,game.world.centerY, 'player');
   game.physics.arcade.enable(player);
   player.body.collideWorldBounds= true;
@@ -188,6 +193,8 @@ function update() {
 
 function renderLevel() {
   level++;
+  announcement.text = "Level " + level;
+  game.add.tween(announcement).to( { alpha: 1 }, 2000, "Linear", true, 0, 0, true);
   //get rid of everything from the previous level
   exit.kill();
   drops.callAll("kill");
@@ -300,11 +307,15 @@ function pickUp(player, drop) {
   else if(drop.key === "powerUp") {
     var rand = game.rnd.integerInRange(0, 1);
     if(rand === 0 && !doubleSpeed) {
-      playerFiringRate = 150;
+      playerFiringRate = playerFiringRate - (playerFiringRate / 2);
       doubleSpeed = true;
+      announcement.text = "Speed Shot";
+      game.add.tween(announcement).to( { alpha: 1 }, 2000, "Linear", true, 0, 0, true);
     }
     else if(rand === 1 && !doubleShot) {
       doubleShot = true;
+      announcement.text = "Double Shot" + level;
+      game.add.tween(announcement).to( { alpha: 1 }, 2000, "Linear", true, 0, 0, true);
     }
   }
 
