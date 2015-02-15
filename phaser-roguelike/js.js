@@ -305,7 +305,16 @@ function pickUp(player, drop) {
     }
   }
   else if(drop.key === "powerUp") {
-    var rand = game.rnd.integerInRange(0, 1);
+    if(!doubleSpeed && !doubleShot) {
+      var rand = game.rnd.integerInRange(0, 1);
+    }
+    else if(doubleSpeed) {
+      rand = 1;
+    }
+    else if(doubleShot) {
+      rand = 0;
+    }
+
     if(rand === 0 && !doubleSpeed) {
       playerFiringRate = playerFiringRate - (playerFiringRate / 2);
       doubleSpeed = true;
@@ -314,7 +323,7 @@ function pickUp(player, drop) {
     }
     else if(rand === 1 && !doubleShot) {
       doubleShot = true;
-      announcement.text = "Double Shot" + level;
+      announcement.text = "Double Shot";
       game.add.tween(announcement).to( { alpha: 1 }, 2000, "Linear", true, 0, 0, true);
     }
   }
