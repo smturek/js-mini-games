@@ -48,6 +48,10 @@ function preload() {
   game.load.image('exit', 'assets/exit.png');
   game.load.image('player', 'assets/player.png');
   game.load.image('monster', 'assets/monster.png');
+  game.load.image('blastMonster', 'assets/blastmonster.png');
+  game.load.image('monster2', 'assets/monster2.png');
+  game.load.image('monster3', 'assets/monster3.png');
+  game.load.image('boss', 'assets/boss.png');
   game.load.image('bullet', 'assets/bullet.png');
   game.load.image('enemyBullet', 'assets/ebullet.png');
   game.load.image('life', 'assets/life.png');
