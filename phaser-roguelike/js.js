@@ -232,25 +232,11 @@ function renderLevel() {
     for(var i = 0; i < randMonsters; i++) {
       x = game.rnd.integerInRange(40, 870);
       y = game.rnd.integerInRange(40, 470);
-      monsterType = game.rnd.integerInRange(0, 3);
-      if(monsterType === 0) {
-        monster = monsters.create(x, y, 'monster');
-      }
-      else if(monsterType === 1) {
-        monster = monsters.create(x, y, 'blastMonster');
-      }
-      else if(monsterType === 2) {
-        monster = monsters.create(x, y, 'monster2');
-      }
-      else if(monsterType === 3) {
-        monster = monsters.create(x, y, 'monster3');
-        monster.health = 3;
-      }
-      monster.body.immovable = true;
-      monster.anchor.setTo(0.5, 0.5);
+      randomMonster(x, y);
     }
   }
   levelText.text = levelString + level;
+  console.log(monsters.length)
 }
 
 function showExit() {
@@ -357,15 +343,22 @@ function monsterHit(monster, bullet) {
   monster.damage(1);
   if(monster.health === 0) {
     killCount++;
-    var rand = game.rnd.integerInRange(0, 10);
-    if(rand < 1 && PowerUp) {
-      drop = drops.create(monster.x, monster.y, "powerUp")
-      drop.body.immovable = true;
-      PowerUp = false;
+    if(monster.key === 'monster2') {
+      //create two monsters
+      var babyMonster = monsters.create(monster.x - 10, monster.y - 10, 'monster');
+      babyMonster = monsters.create(monster.x + 10, monster.y + 10, 'monster');
     }
-    else if(rand < 3) {
-      drop = drops.create(monster.x, monster.y, "lifeUp")
-      drop.body.immovable = true;
+    else{
+      var rand = game.rnd.integerInRange(0, 10);
+      if(rand < 1 && PowerUp) {
+        drop = drops.create(monster.x, monster.y, "powerUp")
+        drop.body.immovable = true;
+        PowerUp = false;
+      }
+      else if(rand < 3) {
+        drop = drops.create(monster.x, monster.y, "lifeUp")
+        drop.body.immovable = true;
+      }
     }
   }
 }
@@ -392,8 +385,29 @@ function hitsWall(bullet) {
   bullet.kill();
 }
 
+function randomMonster(x, y) {
+  monsterType = game.rnd.integerInRange(0, 3);
+  if(monsterType === 0) {
+    monster = monsters.create(x, y, 'monster');
+  }
+  else if(monsterType === 1) {
+    monster = monsters.create(x, y, 'blastMonster');
+  }
+  else if(monsterType === 2) {
+    monster = monsters.create(x, y, 'monster2');
+  }
+  else if(monsterType === 3) {
+    monster = monsters.create(x, y, 'monster3');
+    monster.health = 3;
+  }
+  monster.body.immovable = true;
+  monster.anchor.setTo(0.5, 0.5);
+}
+
 function bossLevel() {
-  console.log("BOSS LEVEL!!!!");
+
+  monster = monsters.create(game.world.centerX,  game.world.centerY, 'boss');
+  monster.life = level + 5;
 }
 
 function enemyFires() {
@@ -433,7 +447,7 @@ function enemyFires() {
         }
         else if(livingMonsters[i].key === "monster3") {
           enemyBullet.reset(livingMonsters[i].x, livingMonsters[i].y);
-          game.physics.arcade.moveToObject(enemyBullet,player,200);
+          game.physics.arcade.moveToObject(enemyBullet,player,400);
         }
       }
     }
