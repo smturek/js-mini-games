@@ -216,27 +216,46 @@ function renderLevel() {
   //set up monsters
   enemyTimer = game.time.now + 500;
 
-  if(level === 1) {
-    bossLevel();
+  if(level % 10 === 0) {
+    monster = monsters.create(game.world.centerX,  game.world.centerY, 'boss');
+    monster.anchor.setTo(0.5, 0.5);
+    monster.health = 5 + level;
   }
   else {
     //monster fire rate
     if(level < 21) {
       monsterFireRate = monsterFireRate - 50;
     }
-    var randMonsters = game.rnd.integerInRange(4, 10);
+
+    var min;
+    var max;
     var x;
     var y;
-    var monsterType;
+
+    if(level < 5) {
+      min = 1;
+      max = level;
+    }
+    else if(level < 10) {
+      min = 4;
+      max = 8;
+    }
+    else {
+      min = 6;
+      max = 12;
+    }
+
+    var randMonsters = game.rnd.integerInRange(min, max);
+
 
     for(var i = 0; i < randMonsters; i++) {
-      x = game.rnd.integerInRange(40, 870);
-      y = game.rnd.integerInRange(40, 470);
+      x = game.rnd.integerInRange(50, 860);
+      y = game.rnd.integerInRange(50, 460);
       randomMonster(x, y);
     }
   }
   levelText.text = levelString + level;
-  console.log(monsters.length)
+  console.log(monsters.length);
 }
 
 function showExit() {
@@ -341,38 +360,18 @@ function pickUp(player, drop) {
 function monsterHit(monster, bullet) {
   bullet.kill();
   monster.damage(1);
+  if(monster.key === 'boss' && monster.health % 2 === 0) {
+      var x = game.rnd.integerInRange(50, 860);
+      var y = game.rnd.integerInRange(50, 460);
+      randomMonster(x, y);
+  }
+
   if(monster.health === 0) {
     killCount++;
     if(monster.key === 'monster2') {
       //create two monsters
-      var offspring = monsters.create(monster.x - 10, monster.y - 10, 'monster');
-      offspring = monsters.create(monster.x + 10, monster.y + 10, 'monster');
-    }
-    else if(monster.key === 'boss') {
-      if(monster.health % 2 === 0) {
-        var x = game.rnd.integerInRange(30, 100);
-        var y = game.rnd.integerInRange(30, 100);
-        //randomizes where monster will show up
-        //positive or negative
-        var xPositive = game.rnd.integerInRange(0,1);
-        var yPositive = game.rnd.integerInRange(0, 1);
-
-        if(xPositive === 0) {
-          x -= monster.x;
-        }
-        else if(xPositive === 1) {
-          x += monster.x;
-        }
-
-        if(yPositive === 0) {
-          y -= monster.y;
-        }
-        else if(yPositive === 1) {
-          y += monster.y;
-        }
-
-        randomMonster(x, y);
-      }
+      var offspring = monsters.create(monster.x - 20, monster.y - 20, 'monster');
+      offspring = monsters.create(monster.x + 20, monster.y + 20, 'monster');
     }
     else{
       var rand = game.rnd.integerInRange(0, 10);
@@ -386,6 +385,7 @@ function monsterHit(monster, bullet) {
         drop.body.immovable = true;
       }
     }
+    // monster.destroy(false);
   }
 }
 
@@ -412,7 +412,7 @@ function hitsWall(bullet) {
 }
 
 function randomMonster(x, y) {
-  monsterType = game.rnd.integerInRange(0, 3);
+  var monsterType = game.rnd.integerInRange(0, 3);
   if(monsterType === 0) {
     monster = monsters.create(x, y, 'monster');
   }
@@ -428,13 +428,6 @@ function randomMonster(x, y) {
   }
   monster.body.immovable = true;
   monster.anchor.setTo(0.5, 0.5);
-}
-
-function bossLevel() {
-
-  monster = monsters.create(game.world.centerX,  game.world.centerY, 'boss');
-  monster.anchor.setTo(0.5, 0.5);
-  monster.health = level + 5;
 }
 
 function enemyFires() {
