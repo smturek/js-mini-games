@@ -141,7 +141,7 @@ function update() {
   game.physics.arcade.collide(monsters, walls);
   game.physics.arcade.overlap(bullets, walls, hitsWall);
   game.physics.arcade.overlap(enemyBullets, walls, hitsWall);
-  game.physics.arcade.overlap(monsters, bullets, handleCollisions);
+  game.physics.arcade.overlap(monsters, bullets, monsterHit);
   game.physics.arcade.overlap(enemyBullets, player, playerHit, null, this);
   game.physics.arcade.overlap(exit, player, renderLevel);
   game.physics.arcade.overlap(drops, player, pickUp);
@@ -206,11 +206,6 @@ function renderLevel() {
   enemyBullets.callAll("kill");
   noExit = true;
 
-  //monster fire rate
-  if(level < 21) {
-    monsterFireRate = monsterFireRate - 50;
-  }
-
   //if player has all powerups don't drop anymore
   if(doubleShot && doubleSpeed) {
     PowerUp = false;
@@ -220,29 +215,40 @@ function renderLevel() {
   }
   //set up monsters
   enemyTimer = game.time.now + 500;
-  var randMonsters = game.rnd.integerInRange(4, 10);
-  var x;
-  var y;
-  var monsterType;
 
-  for(var i = 0; i < randMonsters; i++) {
-    x = game.rnd.integerInRange(40, 870);
-    y = game.rnd.integerInRange(40, 470);
-    monsterType = game.rnd.integerInRange(0, 3);
-    if(monsterType === 0) {
-      monster = monsters.create(x, y, 'monster');
+  if(level % 10 === 0) {
+    bossLevel();
+  }
+  else {
+    //monster fire rate
+    if(level < 21) {
+      monsterFireRate = monsterFireRate - 50;
     }
-    else if(monsterType === 1) {
-      monster = monsters.create(x, y, 'blastMonster');
+    var randMonsters = game.rnd.integerInRange(4, 10);
+    var x;
+    var y;
+    var monsterType;
+
+    for(var i = 0; i < randMonsters; i++) {
+      x = game.rnd.integerInRange(40, 870);
+      y = game.rnd.integerInRange(40, 470);
+      monsterType = game.rnd.integerInRange(0, 3);
+      if(monsterType === 0) {
+        monster = monsters.create(x, y, 'monster');
+      }
+      else if(monsterType === 1) {
+        monster = monsters.create(x, y, 'blastMonster');
+      }
+      else if(monsterType === 2) {
+        monster = monsters.create(x, y, 'monster2');
+      }
+      else if(monsterType === 3) {
+        monster = monsters.create(x, y, 'monster3');
+        monster.health = 3;
+      }
+      monster.body.immovable = true;
+      monster.anchor.setTo(0.5, 0.5);
     }
-    else if(monsterType === 2) {
-      monster = monsters.create(x, y, 'monster2');
-    }
-    else if(monsterType === 3) {
-      monster = monsters.create(x, y, 'monster3');
-    }
-    monster.body.immovable = true;
-    monster.anchor.setTo(0.5, 0.5);
   }
   levelText.text = levelString + level;
 }
@@ -346,19 +352,21 @@ function pickUp(player, drop) {
 
 }
 
-function handleCollisions(monster, bullet) {
+function monsterHit(monster, bullet) {
   bullet.kill();
-  monster.kill();
-  killCount++;
-  var rand = game.rnd.integerInRange(0, 10);
-  if(rand < 1 && PowerUp) {
-    drop = drops.create(monster.x, monster.y, "powerUp")
-    drop.body.immovable = true;
-    PowerUp = false;
-  }
-  else if(rand < 3) {
-    drop = drops.create(monster.x, monster.y, "lifeUp")
-    drop.body.immovable = true;
+  monster.damage(1);
+  if(monster.health === 0) {
+    killCount++;
+    var rand = game.rnd.integerInRange(0, 10);
+    if(rand < 1 && PowerUp) {
+      drop = drops.create(monster.x, monster.y, "powerUp")
+      drop.body.immovable = true;
+      PowerUp = false;
+    }
+    else if(rand < 3) {
+      drop = drops.create(monster.x, monster.y, "lifeUp")
+      drop.body.immovable = true;
+    }
   }
 }
 
@@ -382,6 +390,10 @@ function playerHit(player, bullet) {
 
 function hitsWall(bullet) {
   bullet.kill();
+}
+
+function bossLevel() {
+  console.log("BOSS LEVEL!!!!");
 }
 
 function enemyFires() {
