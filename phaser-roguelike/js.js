@@ -223,12 +223,24 @@ function renderLevel() {
   var randMonsters = game.rnd.integerInRange(4, 10);
   var x;
   var y;
+  var monsterType;
 
   for(var i = 0; i < randMonsters; i++) {
     x = game.rnd.integerInRange(40, 870);
     y = game.rnd.integerInRange(40, 470);
-
-    monster = monsters.create(x, y, 'monster');
+    monsterType = game.rnd.integerInRange(0, 3);
+    if(monsterType === 0) {
+      monster = monsters.create(x, y, 'monster');
+    }
+    else if(monsterType === 1) {
+      monster = monsters.create(x, y, 'blastMonster');
+    }
+    else if(monsterType === 2) {
+      monster = monsters.create(x, y, 'monster2');
+    }
+    else if(monsterType === 3) {
+      monster = monsters.create(x, y, 'monster3');
+    }
     monster.body.immovable = true;
     monster.anchor.setTo(0.5, 0.5);
   }
