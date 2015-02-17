@@ -216,7 +216,7 @@ function renderLevel() {
   //set up monsters
   enemyTimer = game.time.now + 500;
 
-  if(level % 10 === 0) {
+  if(level === 1) {
     bossLevel();
   }
   else {
@@ -345,8 +345,34 @@ function monsterHit(monster, bullet) {
     killCount++;
     if(monster.key === 'monster2') {
       //create two monsters
-      var babyMonster = monsters.create(monster.x - 10, monster.y - 10, 'monster');
-      babyMonster = monsters.create(monster.x + 10, monster.y + 10, 'monster');
+      var offspring = monsters.create(monster.x - 10, monster.y - 10, 'monster');
+      offspring = monsters.create(monster.x + 10, monster.y + 10, 'monster');
+    }
+    else if(monster.key === 'boss') {
+      if(monster.health % 2 === 0) {
+        var x = game.rnd.integerInRange(30, 100);
+        var y = game.rnd.integerInRange(30, 100);
+        //randomizes where monster will show up
+        //positive or negative
+        var xPositive = game.rnd.integerInRange(0,1);
+        var yPositive = game.rnd.integerInRange(0, 1);
+
+        if(xPositive === 0) {
+          x -= monster.x;
+        }
+        else if(xPositive === 1) {
+          x += monster.x;
+        }
+
+        if(yPositive === 0) {
+          y -= monster.y;
+        }
+        else if(yPositive === 1) {
+          y += monster.y;
+        }
+
+        randomMonster(x, y);
+      }
     }
     else{
       var rand = game.rnd.integerInRange(0, 10);
@@ -407,7 +433,8 @@ function randomMonster(x, y) {
 function bossLevel() {
 
   monster = monsters.create(game.world.centerX,  game.world.centerY, 'boss');
-  monster.life = level + 5;
+  monster.anchor.setTo(0.5, 0.5);
+  monster.health = level + 5;
 }
 
 function enemyFires() {
@@ -448,6 +475,70 @@ function enemyFires() {
         else if(livingMonsters[i].key === "monster3") {
           enemyBullet.reset(livingMonsters[i].x, livingMonsters[i].y);
           game.physics.arcade.moveToObject(enemyBullet,player,400);
+        }
+        else if(livingMonsters[i].key === "boss") {
+          enemyBullet.reset(livingMonsters[i].x - 20, livingMonsters[i].y - 20);
+          enemyBullet.body.velocity.y = -200;
+
+          enemyBullet = enemyBullets.getFirstExists(false);
+          enemyBullet.reset(livingMonsters[i].x - 20, livingMonsters[i].y - 20);
+          enemyBullet.body.velocity.y = 200;
+
+          enemyBullet = enemyBullets.getFirstExists(false);
+          enemyBullet.reset(livingMonsters[i].x - 20, livingMonsters[i].y - 20);
+          enemyBullet.body.velocity.x = -200;
+
+          enemyBullet = enemyBullets.getFirstExists(false);
+          enemyBullet.reset(livingMonsters[i].x - 20, livingMonsters[i].y - 20);
+          enemyBullet.body.velocity.x = 200;
+
+          enemyBullet = enemyBullets.getFirstExists(false);
+          enemyBullet.reset(livingMonsters[i].x + 20, livingMonsters[i].y + 20);
+          enemyBullet.body.velocity.y = -200;
+
+          enemyBullet = enemyBullets.getFirstExists(false);
+          enemyBullet.reset(livingMonsters[i].x + 20, livingMonsters[i].y + 20);
+          enemyBullet.body.velocity.y = 200;
+
+          enemyBullet = enemyBullets.getFirstExists(false);
+          enemyBullet.reset(livingMonsters[i].x + 20, livingMonsters[i].y + 20);
+          enemyBullet.body.velocity.x = -200;
+
+          enemyBullet = enemyBullets.getFirstExists(false);
+          enemyBullet.reset(livingMonsters[i].x + 20, livingMonsters[i].y + 20);
+          enemyBullet.body.velocity.x = 200;
+
+          enemyBullet = enemyBullets.getFirstExists(false);
+          enemyBullet.reset(livingMonsters[i].x + 20, livingMonsters[i].y - 20);
+          enemyBullet.body.velocity.y = -200;
+
+          enemyBullet = enemyBullets.getFirstExists(false);
+          enemyBullet.reset(livingMonsters[i].x + 20, livingMonsters[i].y - 20);
+          enemyBullet.body.velocity.y = 200;
+
+          enemyBullet = enemyBullets.getFirstExists(false);
+          enemyBullet.reset(livingMonsters[i].x + 20, livingMonsters[i].y - 20);
+          enemyBullet.body.velocity.x = -200;
+
+          enemyBullet = enemyBullets.getFirstExists(false);
+          enemyBullet.reset(livingMonsters[i].x + 20, livingMonsters[i].y - 20);
+          enemyBullet.body.velocity.x = 200;
+
+          enemyBullet = enemyBullets.getFirstExists(false);
+          enemyBullet.reset(livingMonsters[i].x - 20, livingMonsters[i].y + 20);
+          enemyBullet.body.velocity.y = -200;
+
+          enemyBullet = enemyBullets.getFirstExists(false);
+          enemyBullet.reset(livingMonsters[i].x - 20, livingMonsters[i].y + 20);
+          enemyBullet.body.velocity.y = 200;
+
+          enemyBullet = enemyBullets.getFirstExists(false);
+          enemyBullet.reset(livingMonsters[i].x - 20, livingMonsters[i].y + 20);
+          enemyBullet.body.velocity.x = -200;
+
+          enemyBullet = enemyBullets.getFirstExists(false);
+          enemyBullet.reset(livingMonsters[i].x - 20, livingMonsters[i].y + 20);
+          enemyBullet.body.velocity.x = 200;
         }
       }
     }
