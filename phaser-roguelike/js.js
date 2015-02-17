@@ -392,11 +392,37 @@ function enemyFires() {
 
   if(livingMonsters.length > 0) {
     for(var i = 0; i < livingMonsters.length; i++) {
-      enemyBullet = enemyBullets.getFirstExists(false)
+      enemyBullet = enemyBullets.getFirstExists(false);
       if(enemyBullet) {
         enemyBullet.anchor.setTo(0.5, 0.5);
-        enemyBullet.reset(livingMonsters[i].x, livingMonsters[i].y);
-        game.physics.arcade.moveToObject(enemyBullet,player,200);
+        if(livingMonsters[i].key === "monster") {
+          enemyBullet.reset(livingMonsters[i].x, livingMonsters[i].y);
+          game.physics.arcade.moveToObject(enemyBullet,player,200);
+        }
+        else if(livingMonsters[i].key === "blastMonster") {
+          enemyBullet.reset(livingMonsters[i].x, livingMonsters[i].y);
+          enemyBullet.body.velocity.y = -200;
+
+          enemyBullet = enemyBullets.getFirstExists(false);
+          enemyBullet.reset(livingMonsters[i].x, livingMonsters[i].y);
+          enemyBullet.body.velocity.y = 200;
+
+          enemyBullet = enemyBullets.getFirstExists(false);
+          enemyBullet.reset(livingMonsters[i].x, livingMonsters[i].y);
+          enemyBullet.body.velocity.x = -200;
+
+          enemyBullet = enemyBullets.getFirstExists(false);
+          enemyBullet.reset(livingMonsters[i].x, livingMonsters[i].y);
+          enemyBullet.body.velocity.x = 200;
+        }
+        else if(livingMonsters[i].key === "monster2") {
+          enemyBullet.reset(livingMonsters[i].x, livingMonsters[i].y);
+          game.physics.arcade.moveToObject(enemyBullet,player,200);
+        }
+        else if(livingMonsters[i].key === "monster3") {
+          enemyBullet.reset(livingMonsters[i].x, livingMonsters[i].y);
+          game.physics.arcade.moveToObject(enemyBullet,player,200);
+        }
       }
     }
   }
