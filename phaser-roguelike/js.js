@@ -35,6 +35,7 @@ var monster;
 var monsterFireRate = 1200;
 var killCount = 0;
 var livingMonsters;
+var variant = false;
 
 var bullets;
 var bulletTimer = 0;
@@ -222,6 +223,7 @@ function renderLevel() {
   textLeft.visible = false;
   textRight.visible = false;
   exitText.visible = false;
+  variant = false;
   level++;
   announcement.text = "Level " + level;
   game.add.tween(announcement).to( { alpha: 1 }, 2000, "Linear", true, 0, 0, true);
@@ -240,8 +242,6 @@ function renderLevel() {
   else {
     PowerUp = true;
   }
-  //set up monsters
-  enemyTimer = game.time.now + 500;
 
   if(level % 10 === 0) {
     monster = monsters.create(game.world.centerX,  game.world.centerY, 'boss');
@@ -290,7 +290,6 @@ function renderLevel() {
 
     var randMonsters = game.rnd.integerInRange(min, max);
 
-
     for(var i = 0; i < randMonsters; i++) {
       x = game.rnd.integerInRange(50, 860);
       y = game.rnd.integerInRange(50, 460);
@@ -298,7 +297,12 @@ function renderLevel() {
     }
   }
   levelText.text = levelString + level;
-  console.log(monsters.length);
+  if(level === 1) {
+    enemyTimer = game.time.now + 2000;
+  }
+  else {
+  enemyTimer = game.time.now + 500;
+  }
 }
 
 function showExit() {
@@ -427,12 +431,12 @@ function monsterHit(monster, bullet) {
     }
     else{
       var rand = game.rnd.integerInRange(0, 10);
-      if(rand < 1 && PowerUp) {
+      if(rand < 1 && PowerUp && level > 4) {
         drop = drops.create(monster.x, monster.y, "powerUp")
         drop.body.immovable = true;
         PowerUp = false;
       }
-      else if(rand < 3) {
+      else if(rand < 3 && level != 1) {
         drop = drops.create(monster.x, monster.y, "lifeUp")
         drop.body.immovable = true;
       }
@@ -465,7 +469,42 @@ function hitsWall(bullet) {
 }
 
 function randomMonster(x, y) {
-  var monsterType = game.rnd.integerInRange(0, 3);
+  var monsterType;
+
+  if(level < 4) {
+    monsterType = 0
+  }
+  else if(level === 4) {
+    if(!variant) {
+      monsterType = 1;
+      variant = true;
+    }
+    else {
+      monsterType = 0;
+    }
+  }
+  else if(level === 5) {
+    if(!variant) {
+      monsterType = 2;
+      variant = true;
+    }
+    else {
+      monsterType = 0;
+    }
+  }
+  else if(level === 6) {
+    if(!variant) {
+      monsterType = 3;
+      variant = true;
+    }
+    else {
+      monsterType = 0;
+    }
+  }
+  else {
+    monsterType = game.rnd.integerInRange(0, 3);
+  }
+
   if(monsterType === 0) {
     monster = monsters.create(x, y, 'monster');
   }
