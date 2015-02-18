@@ -54,7 +54,7 @@ function preload() {
   game.load.image('boss', 'assets/boss.png');
   game.load.image('bullet', 'assets/bullet.png');
   game.load.image('enemyBullet', 'assets/ebullet.png');
-  game.load.image('life', 'assets/life.png');
+  game.load.spritesheet('life', 'assets/life.png', 16, 16, 2);
   game.load.image('powerUp', 'assets/powerup.png')
   game.load.image('lifeUp', 'assets/lifeup.png')
 
@@ -105,7 +105,7 @@ function create() {
 
   lives = game.add.group();
   for(var i = 0; i < playerMaxLife; i++) {
-    life = lives.create(854 + 25 * i, 2, 'life')
+    life = lives.create(854 + 25 * i, 2, 'life', 0);
   }
 
   drops = game.add.group();
@@ -329,6 +329,7 @@ function pickUp(player, drop) {
         missingLife = lives.getChildAt(missingLifeIndex + 1);
       }
       missingLife.reset(missingLife.x, missingLife.y);
+      missingLife.frame = 0;
     }
   }
   else if(drop.key === "powerUp") {
@@ -396,6 +397,8 @@ function playerHit(player, bullet) {
 
   if(life) {
     life.kill();
+    life.visible = true;
+    life.frame = 1;
   }
 
   if (lives.countLiving() < 1) {
