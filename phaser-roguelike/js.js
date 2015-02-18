@@ -19,6 +19,12 @@ var playerFiringRate = 300;
 var lives;
 var life;
 
+var tutorials;
+var tutorial;
+var textRight;
+var textLeft;
+var exitText;
+
 var drops;
 var drop;
 var doubleSpeed = false;
@@ -111,6 +117,23 @@ function create() {
   drops = game.add.group();
   drops.enableBody = true;
 
+  tutorials = game.add.group();
+
+  tutorial = tutorials.create(225, game.world.centerY, 'powerUp');
+  tutorial.anchor.setTo(0.5, 0.5);
+
+  textLeft = game.add.text(225, game.world.centerY + 30, 'Power Up', {font: '20px Arial', fill: '#fff'});
+  textLeft.anchor.setTo(0.5, 0.5);
+
+  tutorial = tutorials.create(675, game.world.centerY, 'lifeUp');
+  tutorial.anchor.setTo(0.5, 0.5);
+
+  textRight = game.add.text(675, game.world.centerY + 30, 'Life Up', {font: '20px Arial', fill: '#fff'});
+  textRight.anchor.setTo(0.5, 0.5);
+
+  exitText = game.add.text(880, 460, 'Exit', {font: '20px Arial', fill: '#fff'});
+  exitText.anchor.setTo(0.5, 0.5);
+
   gameOver = game.add.text(game.world.centerX,game.world.centerY,' ', { font: '84px Arial', fill: '#fff' });
   gameOver.anchor.setTo(0.5, 0.5);
   gameOver.visible = false;
@@ -196,6 +219,9 @@ function update() {
 } // end update function
 
 function renderLevel() {
+  textLeft.visible = false;
+  textRight.visible = false;
+  exitText.visible = false;
   level++;
   announcement.text = "Level " + level;
   game.add.tween(announcement).to( { alpha: 1 }, 2000, "Linear", true, 0, 0, true);
@@ -204,6 +230,7 @@ function renderLevel() {
   drops.callAll("kill");
   bullets.callAll("kill");
   enemyBullets.callAll("kill");
+  tutorials.callAll('kill');
   noExit = true;
 
   //if player has all powerups don't drop anymore
@@ -220,6 +247,28 @@ function renderLevel() {
     monster = monsters.create(game.world.centerX,  game.world.centerY, 'boss');
     monster.anchor.setTo(0.5, 0.5);
     monster.health = 5 + level;
+  }
+  else if(level === 1) {
+    monster = monsters.create(225, game.world.centerY, 'monster');
+    monster.anchor.setTo(0.5, 0.5);
+    textLeft.text = "Normal Monster";
+    textLeft.visible = true;
+
+    monster = monsters.create(675, game.world.centerY, 'monster');
+    monster.anchor.setTo(0.5, 0.5);
+    textRight.text = "Kill monsters to reveal exit";
+    textRight.visible = true;
+  }
+  else if(level === 2) {
+    monster = monsters.create(225, game.world.centerY, 'blastMonster');
+    monster.anchor.setTo(0.5, 0.5);
+    textLeft.text = "Normal Monster";
+    textLeft.visible = true;
+
+    monster = monsters.create(675, game.world.centerY, 'blastMonster');
+    monster.anchor.setTo(0.5, 0.5);
+    textRight.text = "Kill monsters to reveal exit";
+    textRight.visible = true;
   }
   else {
     //monster fire rate
@@ -259,8 +308,16 @@ function renderLevel() {
 }
 
 function showExit() {
-  var x = game.rnd.integerInRange(40, 870);
-  var y = game.rnd.integerInRange(40, 470);
+  var x;
+  var y;
+  if(level === 0 || level === 1 || level === 2) {
+    x = 870;
+    y = 470;
+  }
+  else {
+    x = game.rnd.integerInRange(40, 870);
+    y = game.rnd.integerInRange(40, 470);
+  }
   exit = game.add.sprite(x, y, 'exit');
   game.physics.arcade.enable(exit);
   noExit = false;
@@ -386,7 +443,6 @@ function monsterHit(monster, bullet) {
         drop.body.immovable = true;
       }
     }
-    // monster.destroy(false);
   }
 }
 
