@@ -251,24 +251,18 @@ function renderLevel() {
   else if(level === 1) {
     monster = monsters.create(225, game.world.centerY, 'monster');
     monster.anchor.setTo(0.5, 0.5);
-    textLeft.text = "Normal Monster";
+    textLeft.text = "Monster";
     textLeft.visible = true;
 
     monster = monsters.create(675, game.world.centerY, 'monster');
     monster.anchor.setTo(0.5, 0.5);
-    textRight.text = "Kill monsters to reveal exit";
+    textRight.text = "Kill all monsters to reveal exit";
     textRight.visible = true;
-  }
-  else if(level === 2) {
-    monster = monsters.create(225, game.world.centerY, 'blastMonster');
-    monster.anchor.setTo(0.5, 0.5);
-    textLeft.text = "Normal Monster";
-    textLeft.visible = true;
 
-    monster = monsters.create(675, game.world.centerY, 'blastMonster');
-    monster.anchor.setTo(0.5, 0.5);
-    textRight.text = "Kill monsters to reveal exit";
-    textRight.visible = true;
+    exitText.text = "It is said other variants exist, but no one has proof.  Take care.";
+    exitText.x = game.world.centerX;
+    exitText.y = 490;
+    exitText.visible = true;
   }
   else {
     //monster fire rate
@@ -282,7 +276,7 @@ function renderLevel() {
     var y;
 
     if(level < 5) {
-      min = 1;
+      min = 3;
       max = level;
     }
     else if(level < 10) {
@@ -310,7 +304,7 @@ function renderLevel() {
 function showExit() {
   var x;
   var y;
-  if(level === 0 || level === 1 || level === 2) {
+  if(level === 0 || level === 1) {
     x = 870;
     y = 470;
   }
