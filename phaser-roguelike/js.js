@@ -251,12 +251,12 @@ function renderLevel() {
   else if(level === 1) {
     monster = monsters.create(225, game.world.centerY, 'monster');
     monster.anchor.setTo(0.5, 0.5);
-    textLeft.text = "Monster";
+    textLeft.text = "Bug";
     textLeft.visible = true;
 
     monster = monsters.create(675, game.world.centerY, 'monster');
     monster.anchor.setTo(0.5, 0.5);
-    textRight.text = "Kill all monsters to reveal exit";
+    textRight.text = "Kill all bugs to reveal exit";
     textRight.visible = true;
 
     exitText.text = "It is said other variants exist, but no one has proof.  Take care.";
@@ -366,7 +366,6 @@ function fireBullet(direction) {
             }
           }
         }
-
         bulletTimer = game.time.now + playerFiringRate;
     }
   }
